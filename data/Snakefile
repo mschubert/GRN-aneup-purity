@@ -1,0 +1,11 @@
+rule amps:
+    output:
+        "TableS2D.xlsx"
+    shell:
+        "wget https://www.cancerrxgene.org/gdsc1000/GDSC1000_WebResources//Data/suppData/TableS2D.xlsx"
+
+rule immune:
+    output:
+        "1-s2.0-S1074761318301213-mmc2.xlsx"
+    shell:
+        "wget https://ars.els-cdn.com/content/image/1-s2.0-S1074761318301213-mmc2.xlsx"
