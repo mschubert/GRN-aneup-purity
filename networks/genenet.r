@@ -1,4 +1,6 @@
 sys = import('sys')
+idmap = import('process/idmap')
+tcga = import('data/tcga')
 gnet = import('tools/genenet')
 
 args = sys$cmd$parse(
@@ -6,5 +8,9 @@ args = sys$cmd$parse(
     opt('m', 'method', 'method identifier', 'genenet'),
     opt('o', 'outfile', '.RData to save to', 'genenet/ACC.RData'))
 
-# infer nethods using different methods here
-# save them as data.frames or graph objects
+expr = tcga$rna_seq(args$cohort, trans="vst")
+rownames(expr) = idmap$gene(rownames(expr), to="hgnc_symbol")
+expr = expr[!is.na(rownames(expr)) & rownames(expr) != "",]
+net = gnet$pcor(expr)
+
+save(net, file=args$outfile)
