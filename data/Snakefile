@@ -1,3 +1,25 @@
+rule all:
+    input:
+        expand("{obj}.RData", obj=['amps', 'immune'])
+
+rule amps_obj:
+    input:
+        rscript = "amps.r",
+        data = "TableS2D.xlsx"
+    output:
+        data = "amps.RData"
+    shell:
+        "Rscript {input.rscript} --infile {input.data} --outfile {output.data}"
+
+rule immune_obj:
+    input:
+        rscript = "immune.r",
+        data = "1-s2.0-S1074761318301213-mmc2.xlsx"
+    output:
+        data = "immune.RData"
+    shell:
+        "Rscript {input.rscript} --infile {input.data} --outfile {output.data}"
+
 rule amps:
     output:
         "TableS2D.xlsx"
