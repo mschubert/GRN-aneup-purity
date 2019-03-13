@@ -1,5 +1,9 @@
-# positive set of TF binding
+sys = import('sys')
+enr = import('tools/enrichr')
 
-# use from ENCODE/ChIP consensus
+args = sys$cmd$parse(
+    opt('i', 'infile', 'file to read from', ''),
+    opt('o', 'outfile', 'file to save to', 'tfs.RData'))
 
-# save as objects (per tissue?) here
+sets = enr$genes("ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X")
+save(sets, file=args$outfile)
