@@ -1,0 +1,16 @@
+configfile: "../config.yaml"
+
+rule all:
+    input:
+        expand("{method}/{cohort}.RData", method=config['methods'], cohort=config['cohorts'])
+
+rule network:
+    input:
+        rscript = "{method}.r"
+    output:
+        data = "{method}/{cohort}.RData"
+    shell:
+        "Rscript {input.rscript}"
+            " --cohort {wildcards.cohort}"
+            " --method {wildcards.method}"
+            " --outfile {output.data}"

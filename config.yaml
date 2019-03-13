@@ -1,2 +1,6 @@
 cohorts:
     - ACC
+
+methods:
+    - genenet
+    - aracne
