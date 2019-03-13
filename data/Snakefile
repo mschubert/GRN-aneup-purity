@@ -1,22 +1,20 @@
+datasrc = {
+    'focal' : 'TableS2D.xlsx',
+    'aneup' : 'dummy',
+    'purity' : 'dummy',
+    'immune' : '1-s2.0-S1074761318301213-mmc2.xlsx'
+}
+
 rule all:
     input:
-        expand("{obj}.RData", obj=['amps', 'immune'])
+        expand("{obj}.RData", obj=['focal', 'aneup', 'purity', 'immune'])
 
-rule amps_obj:
+rule obj:
     input:
-        rscript = "amps.r",
-        data = "TableS2D.xlsx"
+        rscript = "{obj}.r",
+        data = lambda wc: datasrc[wc.obj]
     output:
-        data = "amps.RData"
-    shell:
-        "Rscript {input.rscript} --infile {input.data} --outfile {output.data}"
-
-rule immune_obj:
-    input:
-        rscript = "immune.r",
-        data = "1-s2.0-S1074761318301213-mmc2.xlsx"
-    output:
-        data = "immune.RData"
+        data = "{obj}.RData"
     shell:
         "Rscript {input.rscript} --infile {input.data} --outfile {output.data}"
 
