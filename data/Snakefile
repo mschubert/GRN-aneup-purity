@@ -1,3 +1,5 @@
+configfile: "../config.yaml"
+
 datasrc = {
     'focal' : 'TableS2D.xlsx',
     'aneup' : 'dummy',
@@ -13,6 +15,7 @@ rule all:
 rule merge:
     input:
         rscript = "merge.r",
+        config = "../config.yaml",
         data = expand("{obj}.RData", obj=['focal', 'aneup', 'purity', 'immune'])
     output:
         data = "meta.RData"
@@ -22,11 +25,15 @@ rule merge:
 rule obj:
     input:
         rscript = "{obj}.r",
+        config = "../config.yaml",
         data = lambda wc: datasrc[wc.obj]
     output:
         data = "{obj}.RData"
     shell:
-        "Rscript {input.rscript} --infile {input.data} --outfile {output.data}"
+        "Rscript {input.rscript}"
+            " --infile {input.data}"
+            " --config {input.config}"
+            " --outfile {output.data}"
 
 rule amps:
     output:
