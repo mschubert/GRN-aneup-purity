@@ -7,7 +7,16 @@ datasrc = {
 
 rule all:
     input:
-        expand("{obj}.RData", obj=['focal', 'aneup', 'purity', 'immune'])
+        "meta.RData"
+
+rule merge:
+    input:
+        rscript = "merge.r",
+        data = expand("{obj}.RData", obj=['focal', 'aneup', 'purity', 'immune'])
+    output:
+        data = "meta.RData"
+    shell:
+        "Rscript {input.rscript} --outfile {output.data} {input.data}"
 
 rule obj:
     input:
