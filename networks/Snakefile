@@ -1,5 +1,10 @@
 configfile: "../config.yaml"
 
+mem = {
+    'aracne' : 2000,
+    'genenet' : 102400
+}
+
 rule all:
     input:
         expand("{method}/{cohort}.RData", method=config['methods'], cohort=config['cohorts'])
@@ -9,6 +14,9 @@ rule network:
         rscript = "{method}.r"
     output:
         data = "{method}/{cohort}.RData"
+    resources:
+        mem = lambda wc: mem[wc.method],
+        walltime = 720
     shell:
         "Rscript {input.rscript}"
             " --cohort {wildcards.cohort}"
