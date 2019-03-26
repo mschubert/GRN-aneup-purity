@@ -8,7 +8,11 @@ args = sys$cmd$parse(
     opt('m', 'method', 'method identifier', 'genenet'),
     opt('o', 'outfile', '.RData to save to', 'genenet/ACC.RData'))
 
-expr = tcga$rna_seq(args$cohort, trans="vst")
+counts = tcga$rna_seq(args$cohort, trans="raw")
+keep = rowSums(counts) >= 5 * ncol(counts)
+rm(counts)
+
+expr = tcga$rna_seq(args$cohort, trans="vst")[keep,]
 rownames(expr) = idmap$gene(rownames(expr), to="hgnc_symbol")
 expr = expr[!is.na(rownames(expr)) & rownames(expr) != "",]
 net = gnet$pcor(expr)

@@ -14,7 +14,11 @@ tfs = gset$go() %>%
     filter(id == "GO:0003700") %>%
     pull(hgnc_symbol)
 
-expr = tcga$rna_seq(args$cohort, trans="vst")
+counts = tcga$rna_seq(args$cohort, trans="raw")
+keep = rowSums(counts) >= 5 * ncol(counts)
+rm(counts)
+
+expr = tcga$rna_seq(args$cohort, trans="vst")[keep,]
 rownames(expr) = idmap$gene(rownames(expr), to="hgnc_symbol")
 expr = expr[!is.na(rownames(expr)) & rownames(expr) != "",]
 
