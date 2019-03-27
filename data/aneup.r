@@ -20,6 +20,7 @@ genes = seq$coords$gene("hgnc_symbol", chromosomes=c(1:22,'X')) %>%
     group_by(chromosome_name) %>%
     tidyr::nest() %>%
     arrange(chromosome_name) %$%
-    setNames(data, chromosome_name)
+    setNames(data, chromosome_name) %>%
+    lapply(function(s) s$gene)
 
 save(copies, genes, file=args$outfile)
