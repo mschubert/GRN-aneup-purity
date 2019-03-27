@@ -15,21 +15,19 @@ args = sys$cmd$parse(
 tfs = io$load(args$tfs)
 
 net = io$load(args$network)
-net_all = unique(c(net$Regulator, net$Target))
-net_tfs = unique(net$Regulator)
-net_tgs = setdiff(net_all, net_tfs)
+valid_genes = unique(c(net$Regulator, net$Target))
 
 # get gene sets of co-amplified segments (either focal CNA or aneuploidy)
 rset = io$load(args$regions)
 keep = rownames(rset$copies[[args$cohort]])
 cna_genes = rset$genes[keep] %>%
-    gset$filter(min=2, max=Inf, valid=net_all)
+    gset$filter(min=2, max=Inf, valid=valid_genes)
 
 # compare within-segment vs. outside of segment
 #   and TF targets vs non-TF targets (FET?)
-set2possible_links = function(genes) {
-    ntf = sum(genes %in% net_tfs)
-    ntg = sum(genes %in% net_tgs)
+set2possible_links = function(genes, net) {
+    ntf = sum(genes %in% net$Regulator)
+    ntg = sum(genes %in% setdiff(net$Target, net$Regulator))
     if (ntf > 0)
         ntf * (ntf-1) + ntf * ntg
     else
@@ -41,8 +39,8 @@ set2real_links = function(genes, net) {
         nrow()
 }
 #TODO: also check for each segment individually
-psbl = c(seg = sum(sapply(cna_genes, set2possible_links)),
-         all = set2possible_links(net_all))
+psbl = c(seg = sum(sapply(cna_genes, set2possible_links, net=net)),
+         all = set2possible_links(valid_genes, net))
 real = c(seg = sum(sapply(cna_genes, set2real_links, net=net)),
          all = nrow(net))
 links = rbind(real, psbl) # so estimate is OR segments over rest
