@@ -8,13 +8,11 @@ tcga = import('data/tcga')
 args = sys$cmd$parse(
     opt('c', 'cohort', 'chr', 'ACC'),
     opt('r', 'regions', 'RData', '../data/focal.RData'),
-    opt('t', 'tfs', 'RData', '../data/tfs.RData'),
     opt('m', 'method', 'aracne or genenet', 'aracne'),
     opt('n', 'network', 'RData', '../networks/aracne/ACC.RData'),
     opt('o', 'outfile', '.RData', 'focal_aracne/ACC.RData'))
 
 util = import(paste0("./", args$method))
-tfs = io$load(args$tfs)
 net = io$load(args$network)
 valid_genes = util$valid_genes(net)
 

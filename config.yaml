@@ -4,3 +4,7 @@ cohorts:
 methods:
     - genenet
     - aracne
+
+regions:
+    - focal
+    - aneup

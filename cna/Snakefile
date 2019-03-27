@@ -1,0 +1,29 @@
+configfile: "../config.yaml"
+
+subworkflow data:
+    workdir: "../data"
+    snakefile: "../data/Snakefile"
+
+subworkflow net:
+    workdir: "../networks"
+    snakefile: "../networks/Snakefile"
+
+rule all:
+    input:
+        expand("{region}_{method}/{cohort}.RData", region=config['regions'],
+                method=config['methods'], cohort=config['cohorts'])
+
+rule fet:
+    input:
+        rscript = "check_region.r",
+        network = net("{method}/{cohort}.RData"),
+        regions = data("{region}.RData")
+    output:
+        result = "{region}_{method}/{cohort}.RData"
+    shell:
+        "Rscript {input.rscript}"
+            " --cohort {wildcards.cohort}"
+            " --regions {input.regions}"
+            " --method {wildcards.method}"
+            " --network {input.network}"
+            " --outfile {output.result}"
