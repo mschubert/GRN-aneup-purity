@@ -1,16 +1,13 @@
-valid_genes = function(net) unique(c(net$Regulator, net$Target))
+valid_genes = function(net) unique(c(as.character(net$node1),
+                                     as.character(net$node2)))
 
 set2possible_links = function(genes, net) {
-    ntf = sum(genes %in% net$Regulator)
-    ntg = sum(genes %in% setdiff(net$Target, net$Regulator))
-    if (ntf > 0)
-        ntf * (ntf-1) + ntf * ntg
-    else
-        0
+    ng = length(genes)
+    0.5 * (ng^2 - ng)
 }
 
 set2real_links = function(genes, net) {
     net %>%
-        filter(Regulator %in% genes & Target %in% genes) %>%
+        filter(node1 %in% genes & node2 %in% genes) %>%
         nrow()
 }

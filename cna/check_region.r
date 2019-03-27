@@ -32,7 +32,9 @@ real = c(seg = sum(sapply(cna_genes, util$set2real_links, net=net)),
 links = rbind(real, psbl) # so estimate is OR segments over rest
 links[,2] = links[,2] - links[,1] # adjust all to outside of segment
 links[2,] = links[2,] - links[1,] # adjust possible to "not chosen"
-res = broom::tidy(fisher.test(links))
+res = broom::tidy(fisher.test(links)) %>%
+    select(-method) %>%
+    mutate(links = list(links))
 
 res
 save(res, file=args$outfile)
