@@ -15,6 +15,6 @@ rm(counts)
 expr = tcga$rna_seq(args$cohort, trans="vst")[keep,]
 rownames(expr) = idmap$gene(rownames(expr), to="hgnc_symbol")
 expr = expr[!is.na(rownames(expr)) & rownames(expr) != "",]
-net = gnet$pcor(expr)
+net = gnet$pcor(expr, fdr=0.05)
 
 save(net, file=args$outfile)
