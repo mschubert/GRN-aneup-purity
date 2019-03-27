@@ -6,11 +6,10 @@ tcga = import('data/tcga')
 cohort_cnas = function(cohort, segs) {
     cseg = segs %>%
         filter(Cancer.Type == cohort) %>%
-        select(chr, start, stop, name=Identifier, genes=Contained.genes) %>%
+        select(chr, start, stop, name=Identifier) %>%
         GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns=TRUE)
 
-    rng = tcga$cna_custom(cohort, "name", cseg, as_array=FALSE) %>%
-        mutate(gene = strsplit(cseg$genes, ",", fixed=TRUE))
+    tcga$cna_custom(cohort, "name", cseg)
 }
 
 args = sys$cmd$parse(
@@ -24,5 +23,9 @@ segs = readxl::read_xlsx(args$infile, skip=19)
 colnames(segs) = make.names(colnames(segs))
 
 copies = lapply(cohorts, cohort_cnas, segs=segs) %>%
-    dplyr::bind_rows()
-save(copies, file=args$outfile)
+    setNames(cohorts)
+genes = segs$Contained.genes %>%
+    strsplit(",", fixed=TRUE) %>%
+    setNames(segs$Identifier)
+
+save(copies, genes, file=args$outfile)
