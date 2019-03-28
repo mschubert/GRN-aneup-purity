@@ -3,8 +3,7 @@ io = import('io')
 sys = import('sys')
 tcga = import('data/tcga')
 
-cohort_cnas = function(segs) {
-    cohort = unique(segs$cohort)
+cohort_cnas = function(cohort, segs) {
     message(cohort)
     cseg = GenomicRanges::makeGRangesFromDataFrame(segs, keep.extra.columns=TRUE)
     tcga$cna_custom(cohort, "name", cseg)
@@ -27,7 +26,7 @@ segs$COAD = segs$READ = segs$`COAD/READ`
 segs$`COAD/READ` = NULL
 segs$PANCAN = NULL # can not get CNVs using TCGA API here
 
-estimate = lapply(segs, cohort_cnas)
+estimate = mapply(cohort_cnas, cohort=names(segs), segs=segs)
 sets = lapply(segs, cohort_genes)
 
 save(estimate, sets, file=args$outfile)
