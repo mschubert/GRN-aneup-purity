@@ -1,5 +1,10 @@
 cohorts:
     - ACC
+    - BRCA
+    - COAD
+    - HNSC
+    - PRAD
+    - SKCM
 
 methods:
     - genenet
