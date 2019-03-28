@@ -10,7 +10,7 @@ cohort_cnas = function(segs) {
 
 cohort_genes = function(segs) {
     sets = strsplit(segs$Contained.genes, ",", fixed=TRUE) %>%
-        setNames(segs$Identifier)
+        setNames(segs$name)
 }
 
 args = sys$cmd$parse(
