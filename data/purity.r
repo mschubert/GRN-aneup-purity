@@ -1,6 +1,21 @@
 io = import('io')
 sys = import('sys')
+idmap = import('process/idmap')
 tcga = import('data/tcga')
+
+cohort2genes = function(cohort) {
+    idx = as.data.frame(estimate[[cohort]])
+    eset = tcga$rna_seq(cohort)[,rownames(idx)] %>%
+        DESeq2::DESeqDataSetFromMatrix(colData=idx, ~purity) %>%
+        DESeq2::estimateSizeFactors()
+    rownames(eset) = idmap$gene(rownames(eset), to="external_gene_name")
+    eset = eset[rowMeans(counts(eset)) >= 5 &
+                !is.na(rownames(eset)) &
+                !duplicated(rownames(eset)),]
+    diff_expr = DESeq2::DESeq(eset) %>%
+        DESeq2::results()
+    genes = rownames(diff_expr)[diff_expr$padj < 0.01]
+}
 
 args = sys$cmd$parse(
     opt('i', 'infile', 'file to read from', ''),
@@ -11,5 +26,6 @@ purity = tcga$purity() %>%
 
 estimate = matrix(purity$estimate, ncol=1, dimnames=list(purity$Sample, "purity")) %>%
     narray::split(along=1, subsets=purity$cohort)
+genes = lapply(names(estimate), cohort2genes)
 
-save(purity, file=args$outfile)
+save(estimate, genes, file=args$outfile)
