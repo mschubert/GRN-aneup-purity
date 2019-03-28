@@ -3,20 +3,14 @@ io = import('io')
 sys = import('sys')
 tcga = import('data/tcga')
 
-cohort_cnas = function(cohort, segs) {
-    if (cohort %in% c("COAD", "READ"))
-        cohort2 = "COAD/READ"
-    else
-        cohort2 = cohort
+cohort_cnas = function(segs) {
+    cseg = GenomicRanges::makeGRangesFromDataFrame(segs, keep.extra.columns=TRUE)
+    tcga$cna_custom(unique(segs$cohort), "name", cseg)
+}
 
-    message(cohort, " (segments ", cohort2, ")")
-
-    cseg = segs %>%
-        filter(Cancer.Type == cohort2) %>%
-        select(chr, start, stop, name=Identifier) %>%
-        GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns=TRUE)
-
-    tcga$cna_custom(cohort, "name", cseg)
+cohort_genes = function(segs) {
+    sets = strsplit(segs$Contained.genes, ",", fixed=TRUE) %>%
+        setNames(segs$Identifier)
 }
 
 args = sys$cmd$parse(
@@ -26,13 +20,14 @@ args = sys$cmd$parse(
 
 cohorts = io$read_yaml(args$config)$cohorts
 
-segs = readxl::read_xlsx(args$infile, skip=19)
-colnames(segs) = make.names(colnames(segs))
+segs = readxl::read_xlsx(args$infile, skip=19) %>%
+    setNames(make.names(colnames(.))) %>%
+    select(name=Identifier, cohort=Cancer.Type, chr, start, stop, Contained.genes) %>%
+    split(.$cohort)
+segs$COAD = segs$READ = segs$`COAD/READ`
+segs$`COAD/READ` = NULL
 
-estimate = lapply(cohorts, cohort_cnas, segs=segs) %>%
-    setNames(cohorts)
-sets = segs$Contained.genes %>%
-    strsplit(",", fixed=TRUE) %>%
-    setNames(segs$Identifier)
+estimate = lapply(segs, cohort_cnas)
+sets = lapply(segs, cohort_genes)
 
 save(estimate, sets, file=args$outfile)
