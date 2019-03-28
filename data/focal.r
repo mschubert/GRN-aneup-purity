@@ -4,8 +4,15 @@ sys = import('sys')
 tcga = import('data/tcga')
 
 cohort_cnas = function(cohort, segs) {
+    if (cohort %in% c("COAD", "READ"))
+        cohort2 = "COAD/READ"
+    else
+        cohort2 = cohort
+
+    message(cohort, " (segments ", cohort2, ")")
+
     cseg = segs %>%
-        filter(Cancer.Type == cohort) %>%
+        filter(Cancer.Type == cohort2) %>%
         select(chr, start, stop, name=Identifier) %>%
         GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns=TRUE)
 
