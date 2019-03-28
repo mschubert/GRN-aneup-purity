@@ -18,9 +18,12 @@ files = do.call(rbind, strsplit(args$infiles, "[./_]")) %>%
     tidyr::unnest()
 
 pdf(args$plotfile)
-ggplot(files, aes(x=method, fill=cohort)) +
-    geom_bar(aes(y=estimate), stat="identity") +
-    facet_wrap(~ regions)
+ggplot(files) +
+    geom_bar(aes(x=cohort, y=estimate), stat="identity") +
+    facet_grid(method ~ regions, scales="free_y") +
+    scale_y_log10() +
+    theme(axis.text.x = element_text(angle=45, hjust=1)) +
+    ggtitle("Odds ratio for links in the same CNA")
 dev.off()
 
 save(files, file=args$outfile)
