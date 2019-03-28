@@ -10,8 +10,20 @@ subworkflow net:
 
 rule all:
     input:
-        expand("{region}_{method}/{cohort}.RData", region=config['regions'],
+
+rule merge:
+    input:
+        rscript = "merge.r",
+        infiles = expand("{region}_{method}/{cohort}.RData", region=config['regions'],
                 method=config['methods'], cohort=config['cohorts'])
+    output:
+        outfile = "merge.RData",
+        plotfile = "merge.pdf"
+    shell:
+        "Rscript {input.rscript}"
+            " --outfile {output.outfile}"
+            " --plotfile {output.plotfile}"
+            " {input.infiles}"
 
 rule fet:
     input:
