@@ -18,8 +18,8 @@ valid_genes = util$valid_genes(net)
 
 # get gene sets of co-amplified segments (either focal CNA or aneuploidy)
 rset = io$load(args$regions)
-keep = rownames(rset$copies[[args$cohort]])
-cna_genes = rset$genes[keep] %>%
+keep = rownames(rset$estimate[[args$cohort]])
+cna_genes = rset$sets[keep] %>%
     gset$filter(min=2, max=Inf, valid=valid_genes)
 
 # compare within-segment vs. outside of segment

@@ -12,10 +12,10 @@ args = sys$cmd$parse(
 
 cohorts = io$read_yaml(args$config)$cohorts
 
-copies = lapply(cohorts, tcga$cna_chrs) %>%
+estimate = lapply(cohorts, tcga$cna_chrs) %>%
     setNames(cohorts)
 
-genes = seq$coords$gene("hgnc_symbol", chromosomes=c(1:22,'X')) %>%
+sets = seq$coords$gene("hgnc_symbol", chromosomes=c(1:22,'X')) %>%
     select(chromosome_name, gene=external_gene_name) %>%
     group_by(chromosome_name) %>%
     tidyr::nest() %>%
@@ -23,4 +23,4 @@ genes = seq$coords$gene("hgnc_symbol", chromosomes=c(1:22,'X')) %>%
     setNames(data, chromosome_name) %>%
     lapply(function(s) s$gene)
 
-save(copies, genes, file=args$outfile)
+save(estimate, sets, file=args$outfile)

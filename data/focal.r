@@ -29,10 +29,10 @@ cohorts = io$read_yaml(args$config)$cohorts
 segs = readxl::read_xlsx(args$infile, skip=19)
 colnames(segs) = make.names(colnames(segs))
 
-copies = lapply(cohorts, cohort_cnas, segs=segs) %>%
+estimate = lapply(cohorts, cohort_cnas, segs=segs) %>%
     setNames(cohorts)
-genes = segs$Contained.genes %>%
+sets = segs$Contained.genes %>%
     strsplit(",", fixed=TRUE) %>%
     setNames(segs$Identifier)
 
-save(copies, genes, file=args$outfile)
+save(estimate, sets, file=args$outfile)
