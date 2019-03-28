@@ -7,7 +7,7 @@ tcga = import('data/tcga')
 
 args = sys$cmd$parse(
     opt('c', 'cohort', 'chr', 'ACC'),
-    opt('r', 'regions', 'RData', '../data/focal.RData'),
+    opt('s', 'sets', 'RData', '../data/focal.RData'),
     opt('m', 'method', 'aracne or genenet', 'aracne'),
     opt('n', 'network', 'RData', '../networks/aracne/ACC.RData'),
     opt('o', 'outfile', '.RData', 'focal_aracne/ACC.RData'))
@@ -17,10 +17,13 @@ net = io$load(args$network)
 valid_genes = util$valid_genes(net)
 
 # get gene sets of co-amplified segments (either focal CNA or aneuploidy)
-rset = io$load(args$regions)
-keep = rownames(rset$estimate[[args$cohort]])
-cna_genes = rset$sets[keep] %>%
-    gset$filter(min=2, max=Inf, valid=valid_genes)
+rset = io$load(args$sets)
+if (args$cohort %in% names(rset$sets)) { # separate sets for each cohort
+    cna_genes = rset$sets[[args$cohort]]
+} else { # common sets (e.g. chromosomes)
+    cna_genes = rset$sets
+}
+cna_genes = gset$filter(cna_genes, min=2, max=Inf, valid=valid_genes)
 
 # compare within-segment vs. outside of segment
 #   and TF targets vs non-TF targets (FET?)

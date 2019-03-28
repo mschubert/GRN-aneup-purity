@@ -10,6 +10,7 @@ methods:
     - genenet
     - aracne
 
-regions:
+set_enrichment:
     - focal
     - aneup
+    - purity
