@@ -10,29 +10,17 @@ datasrc = {
 
 rule all:
     input:
-        "meta.RData", "tfs.RData"
-
-rule merge:
-    input:
-        rscript = "merge.r",
-        config = "../config.yaml",
-        data = expand("{obj}.RData", obj=['focal', 'aneup', 'purity', 'immune'])
-    output:
-        data = "meta.RData"
-    shell:
-        "Rscript {input.rscript} --outfile {output.data} {input.data}"
+        expand("{obj}.RData", obj=datasrc.keys())
 
 rule obj:
     input:
         rscript = "{obj}.r",
-        config = "../config.yaml",
         data = lambda wc: datasrc[wc.obj]
     output:
         data = "{obj}.RData"
     shell:
         "Rscript {input.rscript}"
             " --infile {input.data}"
-            " --config {input.config}"
             " --outfile {output.data}"
 
 rule amps:

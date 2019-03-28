@@ -7,10 +7,9 @@ tcga = import('data/tcga')
 
 args = sys$cmd$parse(
     opt('i', 'infile', 'file to read from', ''),
-    opt('c', 'config', 'yaml', '../config.yaml'),
     opt('o', 'outfile', 'file to save to', 'aneup.RData'))
 
-cohorts = io$read_yaml(args$config)$cohorts
+cohorts = tcga$cohorts()
 
 estimate = lapply(cohorts, tcga$cna_chrs) %>%
     setNames(cohorts)
