@@ -10,6 +10,7 @@ subworkflow net:
 
 rule all:
     input:
+        "merge.pdf", "merge.RData"
 
 rule merge:
     input:

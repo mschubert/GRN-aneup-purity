@@ -5,8 +5,10 @@ tcga = import('data/tcga')
 
 cohort2genes = function(cohort) {
     idx = as.data.frame(estimate[[cohort]])
-    eset = tcga$rna_seq(cohort)[,rownames(idx)] %>%
-        DESeq2::DESeqDataSetFromMatrix(colData=idx, ~purity) %>%
+    eset = tcga$rna_seq(cohort)
+    common = intersect(rownames(idx), colnames(eset))
+    eset = eset[,common] %>%
+        DESeq2::DESeqDataSetFromMatrix(colData=idx[common,,drop=FALSE], ~purity) %>%
         DESeq2::estimateSizeFactors()
     rownames(eset) = idmap$gene(rownames(eset), to="external_gene_name")
     eset = eset[rowMeans(counts(eset)) >= 5 &
@@ -27,7 +29,7 @@ purity = tcga$purity() %>%
 estimate = matrix(purity$estimate, ncol=1, dimnames=list(purity$Sample, "purity")) %>%
     narray::split(along=1, subsets=purity$cohort)
 genes = clustermq::Q(cohort2genes, names(estimate), job_size=1, memory=4096,
-                     export=list(tcga=tcga, estimate=estimate)) %>%
+                     export=list(tcga=tcga, idmap=idmap, estimate=estimate)) %>%
     setNames(names(estimate))
 
 save(estimate, genes, file=args$outfile)
