@@ -28,7 +28,7 @@ purity = tcga$purity() %>%
 
 estimate = matrix(purity$estimate, ncol=1, dimnames=list(purity$Sample, "purity")) %>%
     narray::split(along=1, subsets=purity$cohort)
-genes = clustermq::Q(cohort2genes, names(estimate), job_size=1, memory=4096,
+genes = clustermq::Q(cohort2genes, names(estimate), job_size=1, memory=8192,
                      export=list(tcga=tcga, idmap=idmap, estimate=estimate)) %>%
     setNames(names(estimate))
 
