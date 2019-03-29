@@ -18,6 +18,9 @@ rule obj:
         data = lambda wc: datasrc[wc.obj]
     output:
         data = "{obj}.RData"
+    resources:
+        mem = 4096,
+        time = 240
     shell:
         "Rscript {input.rscript}"
             " --infile {input.data}"
