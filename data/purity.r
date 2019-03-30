@@ -16,7 +16,7 @@ cohort2genes = function(cohort) {
                 !duplicated(rownames(eset)),]
     diff_expr = DESeq2::DESeq(eset) %>%
         DESeq2::results()
-    genes = rownames(diff_expr)[diff_expr$padj < 0.01]
+    genes = list(purity=rownames(diff_expr)[diff_expr$padj < 0.01])
 }
 
 args = sys$cmd$parse(
