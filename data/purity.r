@@ -5,18 +5,22 @@ tcga = import('data/tcga')
 
 cohort2genes = function(cohort) {
     idx = as.data.frame(estimate[[cohort]])
-    eset = tcga$rna_seq(cohort)
+    eset = tcga$rna_seq(cohort) %>%
+        tcga$filter(primary=TRUE, cancer=TRUE)
     common = intersect(rownames(idx), colnames(eset))
     eset = eset[,common] %>%
-        DESeq2::DESeqDataSetFromMatrix(colData=idx[common,,drop=FALSE], ~purity) %>%
+        DESeq2::DESeqDataSetFromMatrix(colData=idx[common,,drop=FALSE], ~1+purity) %>%
         DESeq2::estimateSizeFactors()
     rownames(eset) = idmap$gene(rownames(eset), to="external_gene_name")
     eset = eset[rowMeans(counts(eset)) >= 5 &
                 !is.na(rownames(eset)) &
                 !duplicated(rownames(eset)),]
-    diff_expr = DESeq2::DESeq(eset) %>%
-        DESeq2::results()
-    genes = list(purity=rownames(diff_expr)[diff_expr$padj < 0.01])
+    diff_expr = DESeq2::estimateDispersions(eset) %>%
+        DESeq2::nbinomLRT(reduced=~1, maxit=1000) %>%
+        DESeq2::results() %>%
+        tibble::rownames_to_column("hgnc_symbol") %>%
+        dplyr::arrange(padj)
+    genes = list(purity=head(diff_expr$hgnc_symbol), 1000)
 }
 
 args = sys$cmd$parse(
