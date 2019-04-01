@@ -20,7 +20,7 @@ rule obj:
         data = "{obj}.RData"
     resources:
         mem = 4096,
-        time = 240
+        time = 720
     shell:
         "Rscript {input.rscript}"
             " --infile {input.data}"

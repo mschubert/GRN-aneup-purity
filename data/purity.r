@@ -18,6 +18,7 @@ cohort2genes = function(cohort) {
     diff_expr = DESeq2::estimateDispersions(eset) %>%
         DESeq2::nbinomLRT(reduced=~1, maxit=1000) %>%
         DESeq2::results() %>%
+        as.data.frame() %>%
         tibble::rownames_to_column("hgnc_symbol") %>%
         dplyr::arrange(padj)
     genes = list(purity=head(diff_expr$hgnc_symbol), 1000)
