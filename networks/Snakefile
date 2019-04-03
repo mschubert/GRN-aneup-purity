@@ -1,6 +1,7 @@
 configfile: "../config.yaml"
 
 mem = {
+    'TFbinding' : 1024,
     'aracne' : 10240,
     'genenet' : 102400
 }

@@ -4,8 +4,7 @@ datasrc = {
     'focal' : 'TableS2D.xlsx',
     'aneup' : 'dummy',
     'purity' : 'dummy',
-    'immune' : '1-s2.0-S1074761318301213-mmc2.xlsx',
-    'tfs' : 'dummy'
+    'immune' : '1-s2.0-S1074761318301213-mmc2.xlsx'
 }
 
 rule all:

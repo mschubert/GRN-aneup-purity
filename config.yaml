@@ -9,6 +9,7 @@ cohorts:
 methods:
     - genenet
     - aracne
+    - TFbinding
 
 set_enrichment:
     - focal
