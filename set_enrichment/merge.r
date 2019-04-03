@@ -30,27 +30,27 @@ res = do.call(rbind, strsplit(args$infiles, "[./_]")) %>%
 pdf(args$plotfile)
 ggplot(res) +
     geom_bar(aes(x=cohort, y=estimate), stat="identity") +
-    facet_grid(method ~ regions, scales="free_y") +
+    facet_grid(regions ~ method) +
     scale_y_log10() +
     theme(axis.text.x = element_text(angle=45, hjust=1)) +
     ggtitle("Odds ratio for links in the same CNA")
 
 ggplot(res) +
     geom_bar(aes(x=cohort, y=exp_fp), stat="identity") +
-    facet_grid(method ~ regions, scales="free_y") +
+    facet_grid(regions ~ method) +
     scale_y_log10() +
     theme(axis.text.x = element_text(angle=45, hjust=1)) +
     ggtitle("Expected number of false positive links")
 
 ggplot(res) +
     geom_bar(aes(x=cohort, y=fpr_total*100), stat="identity") +
-    facet_grid(method ~ regions, scales="free") +
+    facet_grid(regions ~ method, scales="free_y") +
     theme(axis.text.x = element_text(angle=45, hjust=1)) +
     ggtitle("FPR genome-wide")
 
 ggplot(res) +
     geom_bar(aes(x=cohort, y=fpr_seg*100), stat="identity") +
-    facet_grid(method ~ regions, scales="free") +
+    facet_grid(regions ~ method) +
     theme(axis.text.x = element_text(angle=45, hjust=1)) +
     ggtitle("FPR within CNA")
 dev.off()
