@@ -1,0 +1,18 @@
+```{r}
+library(dplyr)
+library(cowplot)
+io = import('io')
+
+config = io$read_yaml("../../config.yaml")
+purity = io$load("../../data/purity.RData")
+
+df = lapply(purity$estimate[config$cohorts], reshape2::melt) %>%
+    bind_rows(.id="cohort")
+
+ggplot(df, aes(y=forcats::fct_reorder(cohort, value))) +
+    ggstance::geom_boxploth(aes(x=value, fill=cohort),
+                            outlier.shape=1, outlier.size=0.2, outlier.alpha=0.5) +
+    guides(fill=FALSE) +
+    labs(x = "Purity (fraction of cells are cancer cells)",
+         y = "Cohort")
+```
