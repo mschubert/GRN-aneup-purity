@@ -1,0 +1,27 @@
+```{r}
+library(dplyr)
+library(cowplot)
+io = import('io')
+
+config = io$read_yaml("../../config.yaml")
+aneup = io$load("../../data/aneup.RData")
+
+df = lapply(aneup$estimate[config$cohorts], reshape2::melt) %>%
+    bind_rows(.id="cohort") %>%
+    mutate(chrs = factor(chrs, levels=c(1:22,'X')))
+
+y_labels = seq_along(levels(df$chrs))
+y_labels[(y_labels-1) %% 5 != 0 | y_labels > 20] = ""
+y_labels[length(y_labels)] = "X"
+
+ggplot(df) +
+    geom_vline(xintercept=2:3, linetype="dotted", color="grey") +
+    ggstance::geom_boxploth(aes(x=value, y=chrs, fill=cohort),
+                            outlier.shape=1, outlier.size=0.2, outlier.alpha=0.5) +
+    facet_grid(cohort ~ ., scales="free", space="free_y") +
+    guides(fill=FALSE) +
+    scale_x_continuous(trans="log2", breaks=2:3) +
+    scale_y_discrete(labels=y_labels) +
+    labs(x = "Ploidy (number of chromosomes)",
+         y = "Chromosome")
+```
