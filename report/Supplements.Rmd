@@ -23,10 +23,11 @@ code {
 ```{r echo=FALSE, results="hide"}
 knitr::opts_chunk$set(
     cache = FALSE,
-    echo = TRUE,
-#    eval = FALSE,
-    collapse = TRUE,
-    comment = "#>"
+    message = FALSE,
+    warning = FALSE,
+    echo = FALSE,
+    comment = "#>",
+    fig.width=9
 )
 ```
 

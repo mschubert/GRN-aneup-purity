@@ -1,4 +1,4 @@
-```{r}
+```{r fig.height=12}
 library(dplyr)
 library(cowplot)
 io = import('io')
