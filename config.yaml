@@ -10,6 +10,16 @@ methods:
     - genenet
     - aracne
     - TFbinding
+    - Genie3.wrap
+    - GeneNet.wrap
+    - mrnetb.wrap
+    - mutrank.wrap
+    - pcit.wrap
+    - clr.wrap
+    - mrnet.wrap
+    - aracne.wrap
+    - c3net.wrap
+    - zscore.wrap
 
 set_enrichment:
     - focal

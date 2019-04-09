@@ -12,11 +12,11 @@ rule all:
 
 rule network:
     input:
-        rscript = "{method}.r"
+        rscript = "network.r"
     output:
         data = "{method}/{cohort}.RData"
     resources:
-        mem = lambda wc: mem[wc.method],
+        mem = lambda wc: mem[wc.method] if wc.method in mem.keys() else 40960,
         walltime = 720
     shell:
         "Rscript {input.rscript}"
