@@ -35,11 +35,13 @@ switch(args$method,
             head(top_n)
     },
     "genenet" = {
+        gnet = import('tools/genenet')
         net = gnet$pcor(expr, fdr=1) %>%
             arrange(qval, pval) %>%
             head(top_n)
     },
     "TFbinding" = {
+        enr = import('tools/enrichr')
         sets = enr$genes("ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X")
         names(sets) = sub("_[^_]+$", "", names(sets))
 
