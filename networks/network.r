@@ -24,8 +24,9 @@ switch(args$method,
         ar = import('tools/aracne')
         bs = 100
         clustermq::register_dopar_cmq(n_jobs=bs, memory=10240)
-        net = ar$aracne(expr, tfs, folder=paste0(".temp_", args$cohort),
-                        bootstrap=bs, p.value=0.1) %>%
+        temp = paste0(".temp", args$cohort,
+                      paste(sample(letters, 5), collapse=""), sep="_")
+        net = ar$aracne(expr, tfs, folder=temp, bootstrap=bs, p.value=0.1) %>%
             arrange(pvalue) %>%
             head(top_n)
     },
