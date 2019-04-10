@@ -15,7 +15,7 @@ rm(counts)
 
 expr = tcga$rna_seq(args$cohort, trans="vst")[keep,]
 rownames(expr) = idmap$gene(rownames(expr), to="hgnc_symbol")
-expr = expr[!is.na(rownames(expr)) & rownames(expr) != "",]
+expr = expr[!is.na(rownames(expr)) & rownames(expr) != "" & !duplicated(rownames(expr)),]
 
 top_n = as.integer(args$select)
 
