@@ -1,4 +1,5 @@
 library(dplyr)
+io = import('io')
 sys = import('sys')
 idmap = import('process/idmap')
 tcga = import('data/tcga')

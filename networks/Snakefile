@@ -29,5 +29,4 @@ rule network:
             " --cohort {wildcards.cohort}"
             " --expr {input.expr}"
             " --method {wildcards.method}"
-            " --correction {wildcards.correction}"
             " --outfile {output.data}"
