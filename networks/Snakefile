@@ -1,5 +1,9 @@
 configfile: "../config.yaml"
 
+subworkflow data:
+    workdir: "../data"
+    snakefile: "../data/Snakefile"
+
 mem = {
     'TFbinding' : 1024,
     'aracne' : 10240,
@@ -8,18 +12,22 @@ mem = {
 
 rule all:
     input:
-        expand("{method}/{cohort}.RData", method=config['methods'], cohort=config['cohorts'])
+        expand("{method}/{correction}/{cohort}.RData", method=config['methods'],
+                cohort=config['cohorts'], correction=['naive', 'copycor'])
 
 rule network:
     input:
-        rscript = "network.r"
+        rscript = "network.r",
+        expr = data("expr_{correction}/{cohort}.RData")
     output:
-        data = "{method}/{cohort}.RData"
+        data = "{method}/{correction}/{cohort}.RData"
     resources:
         mem = lambda wc: mem[wc.method] if wc.method in mem.keys() else 40960,
         walltime = 48*60
     shell:
         "Rscript {input.rscript}"
             " --cohort {wildcards.cohort}"
+            " --expr {input.expr}"
             " --method {wildcards.method}"
+            " --correction {wildcards.correction}"
             " --outfile {output.data}"

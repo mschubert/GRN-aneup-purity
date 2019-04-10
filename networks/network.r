@@ -5,18 +5,12 @@ tcga = import('data/tcga')
 
 args = sys$cmd$parse(
     opt('c', 'cohort', 'cohort identifier', 'ACC'),
+    opt('e', 'expr', 'expression matrix RData', '../data/expr_copycor/ACC.RData'),
     opt('s', 'select', 'top N links max', '1e6'),
     opt('m', 'method', 'method identifier', 'aracne'),
-    opt('o', 'outfile', '.RData to save to', 'aracne/ACC.RData'))
+    opt('o', 'outfile', '.RData to save to', 'aracne/copycor/ACC.RData'))
 
-counts = tcga$rna_seq(args$cohort, trans="raw")
-keep = rowSums(counts) >= 5 * ncol(counts)
-rm(counts)
-
-expr = tcga$rna_seq(args$cohort, trans="vst")[keep,]
-rownames(expr) = idmap$gene(rownames(expr), to="hgnc_symbol")
-expr = expr[!is.na(rownames(expr)) & rownames(expr) != "" & !duplicated(rownames(expr)),]
-
+expr = io$load(args$expr)
 top_n = as.integer(args$select)
 
 switch(args$method,
