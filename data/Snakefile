@@ -9,7 +9,23 @@ datasrc = {
 
 rule all:
     input:
-        expand("{obj}.RData", obj=datasrc.keys())
+        expand("{obj}.RData", obj=datasrc.keys()),
+        expand("expr_{type}/{cohort}.RData", type=['naive', 'copycor'],
+                cohort=config['cohorts'])
+
+rule expr:
+    input:
+        rscript = "expr.r"
+    output:
+        data = "expr_{type}/{cohort}.RData"
+    resources:
+        mem = 10240,
+        walltime = 120
+    shell:
+        "Rscript {input.rscript}"
+            " --cohort {wildcards.cohort}"
+            " --correction {wildcards.type}"
+            " --outfile {output.data}"
 
 rule obj:
     input:
@@ -20,6 +36,8 @@ rule obj:
     resources:
         mem = 4096,
         time = 720
+    wildcard_constraints:
+        obj = "^(^expr)"
     shell:
         "Rscript {input.rscript}"
             " --infile {input.data}"
