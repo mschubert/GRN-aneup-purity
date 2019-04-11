@@ -7,7 +7,8 @@ subworkflow data:
 mem = {
     'TFbinding' : 1024,
     'aracne' : 10240,
-    'genenet' : 102400
+    'genenet' : 102400,
+    'GeneNet.wrap' : 102400
 }
 
 rule all:
