@@ -10,21 +10,21 @@ datasrc = {
 rule all:
     input:
         expand("{obj}.RData", obj=datasrc.keys()),
-        expand("expr_{type}/{cohort}.RData", type=['naive', 'copycor'],
+        expand("expr_{correction}/{cohort}.RData", correction=config['correction'],
                 cohort=config['cohorts'])
 
 rule expr:
     input:
         rscript = "expr.r"
     output:
-        data = "expr_{type}/{cohort}.RData"
+        data = "expr_{correction}/{cohort}.RData"
     resources:
         mem = 10240,
         walltime = 120
     shell:
         "Rscript {input.rscript}"
             " --cohort {wildcards.cohort}"
-            " --correction {wildcards.type}"
+            " --correction {wildcards.correction}"
             " --outfile {output.data}"
 
 rule obj:

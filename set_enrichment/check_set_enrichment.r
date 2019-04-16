@@ -9,14 +9,14 @@ args = sys$cmd$parse(
     opt('c', 'cohort', 'chr', 'ACC'),
     opt('s', 'sets', 'RData', '../data/focal.RData'),
     opt('m', 'method', 'aracne or genenet', 'aracne'),
-    opt('n', 'network', 'RData', '../networks/aracne/ACC.RData'),
-    opt('o', 'outfile', '.RData', 'focal_aracne/ACC.RData'))
+    opt('n', 'network', 'RData', '../networks/aracne/naive/ACC.RData'),
+    opt('o', 'outfile', '.RData', 'focal_aracne/naive/ACC.RData'))
 
 util = import(paste0("./", args$method))
 net = io$load(args$network)
 valid_genes = util$valid_genes(net)
 
-if (method == "aracne") {
+if (method == "aracne") { # for now, only one with knowledge what is TF
     valid_genes = function(net) unique(c(net$Regulator, net$Target))
     set2possible_links = function(genes, net) {
         ntf = sum(genes %in% net$Regulator)

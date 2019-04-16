@@ -15,8 +15,9 @@ rule all:
 rule merge:
     input:
         rscript = "merge.r",
-        infiles = expand("{region}_{method}/{cohort}.RData", region=config['set_enrichment'],
-                method=config['methods'], cohort=config['cohorts'])
+        infiles = expand("{region}_{method}/{correction}/{cohort}.RData",
+                region=config['set_enrichment'], method=config['methods'],
+                correction=config['correction'], cohort=config['cohorts'])
     output:
         outfile = "merge.RData",
         plotfile = "merge.pdf"
@@ -29,10 +30,10 @@ rule merge:
 rule fet:
     input:
         rscript = "check_set_enrichment.r",
-        network = net("{method}/{cohort}.RData"),
+        network = net("{method}/{correction}/{cohort}.RData"),
         sets = data("{region}.RData")
     output:
-        result = "{region}_{method}/{cohort}.RData"
+        result = "{region}_{method}/{correction}/{cohort}.RData"
     shell:
         "Rscript {input.rscript}"
             " --cohort {wildcards.cohort}"
