@@ -45,20 +45,27 @@ cna_genes = gset$filter(cna_genes, min=2, max=Inf, valid=valid_genes)
 
 # compare within-segment vs. outside of segment
 #   and TF targets vs non-TF targets (FET?)
-#TODO: also check for each segment individually
-psbl = c(seg = sum(sapply(cna_genes, set2possible_links, net=net)),
-         all = set2possible_links(valid_genes, net))
-real = c(seg = sum(sapply(cna_genes, set2real_links, net=net)),
-         all = nrow(net))
-links = rbind(real, psbl) # so estimate is OR segments over rest
-links[,2] = links[,2] - links[,1] # adjust all to outside of segment
-links[2,] = links[2,] - links[1,] # adjust possible to "not chosen"
-res = broom::tidy(fisher.test(links)) %>%
-    select(-method) %>%
-    mutate(links = list(links))
+do_test = function(seg_real, all_real, seg_psbl, all_psbl, ...) {
+    links = rbind(c(seg_real, all_real), c(seg_psbl, all_psbl))
+    links[,2] = links[,2] - links[,1] # adjust all to outside of segment
+    links[2,] = links[2,] - links[1,] # adjust possible to "not chosen"
+    broom::tidy(fisher.test(links)) %>%
+        select(-method, -alternative) %>%
+        mutate(links = list(links))
+}
+make_counts = function(fun, keep=FALSE) {
+    segs = sapply(cna_genes, fun, net=net)
+    c(all=sum(segs), segs)
+}
+res = data.frame(seg_psbl = make_counts(set2possible_links),
+                 seg_real = make_counts(set2real_links),
+                 all_psbl = set2possible_links(valid_genes, net),
+                 all_real = nrow(net)) %>%
+    tibble::rownames_to_column("seg_id") %>%
+    as_tibble() %>%
+    filter(seg_psbl > 0) %>%
+    mutate(fet = purrr::pmap(., do_test)) %>%
+    tidyr::unnest()
 
 res
 save(res, file=args$outfile)
-
-# plot total number of amp segments (/genes?) per cancer type
-# plot enrichment of amp/del in segments per method
