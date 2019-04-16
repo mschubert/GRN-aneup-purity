@@ -21,7 +21,9 @@ cohort2genes = function(cohort) {
         as.data.frame() %>%
         tibble::rownames_to_column("hgnc_symbol") %>%
         dplyr::arrange(padj)
-    genes = list(purity=head(diff_expr$hgnc_symbol, 1000))
+    cuts = c(100, 500, 1000, 2000, 3000, 4000, 5000)
+    genes = lapply(cuts, function(n) head(diff_expr$hgnc_symbol, n)) %>%
+        setNames(paste0("purity", cuts))
 }
 
 args = sys$cmd$parse(
