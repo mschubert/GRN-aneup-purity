@@ -48,11 +48,11 @@ switch(args$method,
         fun = getFromNamespace(args$method, ns="netbenchmark")
         net = fun(t(expr))
         net = reshape2::melt(net) %>%
-            mutate(node1 = factor(Var1, levels=colnames(net)),
-                   node2 = factor(Var2, levels=colnames(net)),
-                   score = value) %>%
-            filter(value != 0, node1 < node2) %>%
-            arrange(-value) %>%
+            transmute(node1 = factor(Var1, levels=colnames(net)),
+                      node2 = factor(Var2, levels=colnames(net)),
+                      score = value) %>%
+            filter(score != 0, as.integer(node1) < as.integer(node2)) %>%
+            arrange(-score) %>%
             head(top_n)
     }
 )
