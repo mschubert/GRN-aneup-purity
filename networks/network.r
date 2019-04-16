@@ -26,15 +26,13 @@ switch(args$method,
         clustermq::register_dopar_cmq(n_jobs=bs, memory=10240)
         temp = paste0(".temp", args$cohort,
                       paste(sample(letters, 5), collapse=""), sep="_")
-        net = ar$aracne(expr, tfs, folder=temp, bootstrap=bs, p.value=0.1) %>%
-            arrange(pvalue) %>%
-            head(top_n)
+        net = ar$aracne(expr, tfs, folder=temp, bootstrap=bs) %>%
+            arrange(pvalue)
     },
     "genenet" = {
         gnet = import('tools/genenet')
-        net = gnet$pcor(expr, fdr=1) %>%
-            arrange(qval, pval) %>%
-            head(top_n)
+        net = gnet$pcor(expr, fdr=0.01) %>%
+            arrange(qval, pval)
     },
     "TFbinding" = {
         enr = import('tools/enrichr')
