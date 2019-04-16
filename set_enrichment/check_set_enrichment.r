@@ -25,22 +25,13 @@ if (args$method == "aracne") { # for now, only one with knowledge what is TF
         else
             0
     }
-    set2real_links = function(genes, net) {
-        net %>%
-            filter(Regulator %in% genes & Target %in% genes) %>%
-            nrow()
-    }
+    set2real_links = function(genes, net)
+        nrow(filter(net, Regulator %in% genes & Target %in% genes))
 } else {
     valid_genes = unique(c(as.character(net$node1), as.character(net$node2)))
-    set2possible_links = function(genes, net) {
-        ng = length(genes)
-        0.5 * (ng^2 - ng)
-    }
-    set2real_links = function(genes, net) {
-        net %>%
-            filter(node1 %in% genes & node2 %in% genes) %>%
-            nrow()
-    }
+    set2possible_links = function(genes, net) { ng = length(genes); 0.5 * (ng^2 - ng) }
+    set2real_links = function(genes, net)
+        nrow(filter(net, node1 %in% genes & node2 %in% genes))
 }
 
 # get gene sets of co-amplified segments (either focal CNA or aneuploidy)
