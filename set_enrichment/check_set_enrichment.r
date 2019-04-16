@@ -48,6 +48,8 @@ calc_net = function(net, co) {
     net2 = head(net, co)
     do_test = function(seg_real, all_real, seg_psbl, all_psbl, ...) {
         links = rbind(c(seg_real, all_real), c(seg_psbl, all_psbl))
+        colnames(links) = c("seg", "all")
+        rownames(links) = c("real", "psbl")
         links[,2] = links[,2] - links[,1] # adjust all to outside of segment
         links[2,] = links[2,] - links[1,] # adjust possible to "not chosen"
         broom::tidy(fisher.test(links)) %>%
@@ -71,10 +73,10 @@ calc_net = function(net, co) {
 cutoff = nrow(net)
 if (grepl("\\.wrap", args$method))
     cutoff = exp(seq(log(1e3), log(1e6), length.out=20))
-all_cuts = lapply(cutoff, calc_net, net=net) %>%
+res = lapply(cutoff, calc_net, net=net) %>%
     setNames(cutoff) %>%
     bind_rows(.id="edges") %>%
     mutate(edges = as.integer(edges))
 
-all_cuts
-save(all_cuts, file=args$outfile)
+res
+save(res, file=args$outfile)
