@@ -35,9 +35,9 @@ rule obj:
         data = "{obj}.RData"
     resources:
         mem = 4096,
-        time = 720
-    wildcard_constraints:
-        obj = "^(^expr)"
+        time = 48*60
+#    wildcard_constraints:
+#        obj = "^(^expr)"
     shell:
         "Rscript {input.rscript}"
             " --infile {input.data}"
