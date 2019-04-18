@@ -14,7 +14,7 @@ args = sys$cmd$parse(
 
 net = io$load(args$network)
 
-if (args$method == "aracne") { # for now, only one with knowledge what is TF
+if (args$method %in% c("aracne", "TFbinding")) { # with knowledge what is TF
     valid_genes = unique(c(net$Regulator, net$Target))
     set2possible_links = function(genes, net) {
         ntf = sum(genes %in% net$Regulator)
