@@ -42,7 +42,7 @@ ggplot(allseg, aes(x=edges, y=estimate, color=method)) +
           axis.text.x = element_text(angle=45, hjust=1)) +
     ggtitle("Odds ratio for links in the same CNA")
 
-ggplot(allseg, aes(x=edges, y=exp_fp, color=method)) +
+ggplot(allseg, aes(x=edges, y=pmax(0,exp_fp), color=method)) +
     geom_line() +
     geom_point() +
     facet_grid(regions+expr ~ cohort) +
