@@ -16,16 +16,20 @@ args = sys$cmd$parse(
     arg('infiles', 'FET files to load', arity='*',
         list.files(".", "\\.RData", recursive=TRUE, full.names=TRUE)))
 
-res = do.call(rbind, strsplit(args$infiles, "[./_]")) %>%
+res = do.call(rbind, strsplit(tools::file_path_sans_ext(args$infiles), "[/_]")) %>%
     as.data.frame() %>%
-    transmute(regions = V3,
-              method = V4,
+    transmute(regions = V2,
+              method = V3,
+              expr = V4,
               cohort = V5,
               data = io$load(args$infiles)) %>%
     tidyr::unnest() %>%
     mutate(affected = purrr::map2(estimate, links, affected)) %>%
     select(-links) %>%
     tidyr::unnest()
+
+naive_all = filter(res, seg_id == "all", expr == "naive") %>% select(-seg_id)
+cor_all = filter(res, seg_id == "all", expr == "copycor") %>% select(-seg_id)
 
 pdf(args$plotfile)
 ggplot(res) +
