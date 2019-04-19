@@ -10,7 +10,19 @@ subworkflow net:
 
 rule all:
     input:
-        "merge.pdf", "merge.RData"
+        expand("plot_{region}.pdf", region=config['set_enrichment'])
+
+rule plot:
+    input:
+        rscript = "plot_{region}.r",
+        infile = "merge.RData"
+    output:
+        plotfile = "plot_{region}.pdf"
+    shell:
+        "Rscript {input.rscript}"
+            " --infile {input.infile}"
+            " --region {wildcards.region}"
+            " --plotfile {output.plotfile}"
 
 rule merge:
     input:
@@ -19,12 +31,10 @@ rule merge:
                 region=config['set_enrichment'], method=config['methods'],
                 correction=config['correction'], cohort=config['cohorts'])
     output:
-        outfile = "merge.RData",
-        plotfile = "merge.pdf"
+        outfile = "merge.RData"
     shell:
         "Rscript {input.rscript}"
             " --outfile {output.outfile}"
-            " --plotfile {output.plotfile}"
             " {input.infiles}"
 
 rule fet:

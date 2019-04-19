@@ -1,5 +1,4 @@
 library(dplyr)
-library(cowplot)
 io = import('io')
 sys = import('sys')
 
@@ -12,7 +11,6 @@ affected = function(estimate, lnk) { # also count genes affected?
 
 args = sys$cmd$parse(
     opt('o', 'outfile', 'RData', 'merge.RData'),
-    opt('p', 'plotfile', 'pdf', 'merge.pdf'),
     arg('infiles', 'FET files to load', arity='*',
         list.files(".", "\\.RData", recursive=TRUE, full.names=TRUE)))
 
@@ -27,48 +25,5 @@ res = do.call(rbind, strsplit(tools::file_path_sans_ext(args$infiles), "[/_]")) 
     mutate(affected = purrr::map2(estimate, links, affected)) %>%
     select(-links) %>%
     tidyr::unnest()
-
-allseg = filter(res, seg_id == "all") %>% select(-seg_id)
-
-pdf(args$plotfile, 12, 12)
-ggplot(allseg, aes(x=edges, y=estimate, color=method)) +
-    geom_hline(yintercept=1, color="black", linetype="dashed") +
-    geom_line() +
-    geom_point() +
-    facet_grid(regions+expr ~ cohort) +
-    scale_x_log10() +
-    scale_y_log10(breaks=c(0.1,1,3,10,30,100)) +
-    theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
-          axis.text.x = element_text(angle=45, hjust=1)) +
-    ggtitle("Odds ratio for links in the same CNA")
-
-ggplot(allseg, aes(x=edges, y=pmax(0,exp_fp), color=method)) +
-    geom_line() +
-    geom_point() +
-    facet_grid(regions+expr ~ cohort) +
-    scale_x_log10() +
-    scale_y_log10() +
-    theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
-          axis.text.x = element_text(angle=45, hjust=1)) +
-    ggtitle("Expected number of false positive links")
-
-ggplot(allseg, aes(x=edges, y=fpr_total*100, color=method)) +
-    geom_line() +
-    geom_point() +
-    facet_grid(regions+expr ~ cohort, scales="free_y") +
-    scale_x_log10() +
-    theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
-          axis.text.x = element_text(angle=45, hjust=1)) +
-    ggtitle("FPR genome-wide")
-
-ggplot(allseg, aes(x=edges, y=pmax(0,fpr_seg*100), color=method)) +
-    geom_line() +
-    geom_point() +
-    facet_grid(regions+expr ~ cohort) +
-    scale_x_log10() +
-    theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
-          axis.text.x = element_text(angle=45, hjust=1)) +
-    ggtitle("FPR within CNA")
-dev.off()
 
 save(res, file=args$outfile)
