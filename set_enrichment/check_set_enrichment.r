@@ -70,8 +70,8 @@ calc_net = function(net, co) {
         mutate(fet = purrr::pmap(., do_test)) %>%
         tidyr::unnest()
 }
-cutoff = exp(seq(log(1e3), log(1e6), length.out=10))
-if (nrow(net) < rev(cutoff)[1]) {
+cutoff = exp(seq(log(1e3), log(1e6), length.out=15))
+if (nrow(net) < cutoff[length(cutoff)]) {
     cutoff = cutoff[cutoff <= nrow(net)]
     cutoff = exp(seq(log(1e3), log(nrow(net)), length.out=length(cutoff)))
 }
