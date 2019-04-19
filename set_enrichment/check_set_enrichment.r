@@ -80,5 +80,7 @@ res = lapply(cutoff, calc_net, net=net) %>%
     bind_rows(.id="edges") %>%
     mutate(edges = as.integer(edges))
 
-res
+if (grepl("purity", args$sets)) # doesn't make sense to merge topN with topM
+    res = filter(res, seg_id != "all")
+
 save(res, file=args$outfile)
