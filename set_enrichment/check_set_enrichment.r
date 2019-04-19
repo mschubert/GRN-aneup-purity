@@ -70,9 +70,11 @@ calc_net = function(net, co) {
         mutate(fet = purrr::pmap(., do_test)) %>%
         tidyr::unnest()
 }
-cutoff = nrow(net)
-if (grepl("\\.wrap", args$method))
-    cutoff = exp(seq(log(1e3), log(1e6), length.out=20))
+cutoff = exp(seq(log(1e3), log(1e6), length.out=10))
+if (nrow(net) < rev(cutoff)[1]) {
+    cutoff = cutoff[cutoff <= nrow(net)]
+    cutoff = exp(seq(log(1e3), log(nrow(net)), length.out=length(cutoff)))
+}
 res = lapply(cutoff, calc_net, net=net) %>%
     setNames(cutoff) %>%
     bind_rows(.id="edges") %>%
