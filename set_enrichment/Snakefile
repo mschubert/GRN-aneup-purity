@@ -17,6 +17,7 @@ rule TFbinding_enrichment:
     input:
         rscript = "TFbinding_enrichment.r",
         real = "../networks/TFbinding/naive/ACC.RData", # same for all
+        ng = data("ng.RData"),
         net = net(expand("{method}/{correction}/{cohort}.RData",
                  method=[x for x in config['methods'] if x != "TFbinding"],
                  correction=config['correction'], cohort=config['cohorts']))
@@ -26,6 +27,7 @@ rule TFbinding_enrichment:
     shell:
         "Rscript {input.rscript}"
             " --real {input.real}"
+            " --ng {input.ng}"
             " --outfile {output.outfile}"
             " --plotfile {output.plotfile}"
             " {input.net}"
