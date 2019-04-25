@@ -6,27 +6,28 @@ sys = import('sys')
 st = import('stats')
 
 check_hits = function(net, real) {
-    re = c(paste(net[[1]], net[[2]]), paste(net[[2]], net[[1]])) %in%
-        paste(real[[1]], real[[2]]) + 0
-    roc = data.frame(TP = cumsum(re),
-                     FP = cumsum(1-re))
+    re = c(paste(as.character(net[[1]]), as.character(net[[2]])),
+           paste(as.character(net[[2]]), as.character(net[[1]]))) %in%
+        paste(as.character(real[[1]]), as.character(real[[2]])) + 0
+    roc = data.frame(TP = cumsum(re), FP = cumsum(1-re))
     roc2 = roc[re != 0 | c(re[-1], 1) != 0,]
 }
 
 args = sys$cmd$parse(
     opt('r', 'real', 'RData', '../networks/TFbinding/naive/ACC.RData'),
-    opt('o', 'outfile', '.RData', 'TFbinding_background.RData'),
-    opt('p', 'plotfile', 'pdf', 'TFbinding_background.pdf'),
-    arg('net', 'networks', arity='*', '../networks/aracne/naive/ACC.RData'))
+    opt('o', 'outfile', '.RData', 'TFbinding_enrichment.RData'),
+    opt('p', 'plotfile', 'pdf', 'TFbinding_enrichment.pdf'),
+    arg('net', 'networks', arity='*', rep('../networks/aracne/naive/ACC.RData', 2)))
 
 real = unique(io$load(args$real))
 
 hits = do.call(rbind, strsplit(tools::file_path_sans_ext(args$net), "/")) %>%
+    `[`(,c(ncol(.):1)) %>%
     as_tibble(.name_repair="unique") %>%
     transmute(method = ...3,
-              expr = ...4,
-              cohort = ...5,
-              data = io$load(args$net, drop=FALSE)) %>%
+              expr = ...2,
+              cohort = ...1,
+              data = io$load(args$net)) %>%
     mutate(hits = purrr::map(data, check_hits, real=real)) %>%
     select(-data) %>%
     tidyr::unnest()
