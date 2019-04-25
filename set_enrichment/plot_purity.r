@@ -15,7 +15,7 @@ allseg = io$load(args$infile) %>%
 
 pdf(args$plotfile, 12, 8)
 for (segs in allseg) {
-    eplot$error(segs$seg_id[1])
+    print(eplot$text(segs$seg_id[1]))
     print(plt$odds(segs))
     print(plt$fp_total(segs))
     print(plt$fpr_genome(segs))
