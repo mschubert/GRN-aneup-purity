@@ -58,7 +58,10 @@ calc_net = function(net, co) {
     }
     make_counts = function(fun) {
         segs = sapply(cna_genes, fun, net=net2)
-        c(all=sum(segs), segs)
+        if (length(Reduce(intersect, cna_genes)) > 0)
+            segs
+        else # only merge if non-overlapping sets
+            c(all=sum(segs), segs)
     }
     res = data.frame(seg_psbl = make_counts(set2possible_links), # filtered network
                      seg_real = make_counts(set2real_links),
@@ -79,8 +82,5 @@ res = lapply(cutoff, calc_net, net=net) %>%
     setNames(cutoff) %>%
     bind_rows(.id="edges") %>%
     mutate(edges = as.integer(edges))
-
-if (grepl("purity", basename(args$sets))) # doesn't make sense to merge topN with topM
-    res = filter(res, seg_id != "all")
 
 save(res, file=args$outfile)
