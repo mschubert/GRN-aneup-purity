@@ -38,7 +38,7 @@ hits = do.call(rbind, strsplit(tools::file_path_sans_ext(args$net), "/")) %>%
 save(hits, file=args$outfile)
 
 p = ggplot(hits, aes(x=FP, y=TP, color=method)) +
-    geom_abline(data=ng, aes(slope=slope), intercept=0, color="grey", linetype="dashed") +
+    geom_abline(data=ng, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
     geom_line() +
     facet_grid(expr ~ cohort) +
     theme(axis.text.x = element_text(angle=45, hjust=1))
