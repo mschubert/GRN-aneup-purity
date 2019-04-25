@@ -12,6 +12,23 @@ rule all:
     input:
         expand("plot_{region}.pdf", region=config['set_enrichment'])
 
+rule TFbinding_enrichment:
+    input:
+        rscript = "TFbinding_enrichment.r",
+        real = "../networks/TFbinding/naive/ACC.RData", # same for all
+        net = net(expand("{method}/{correction}/{cohort}.RData",
+                 method=set(config['methods']) - set("TFbinding"),
+                 correction=config['correction'], cohort=config['cohorts']))
+    output:
+        outfile = "TFbinding_enrichment.RData",
+        plotfile = "TFbinding_enrichment.pdf"
+    shell:
+        "Rscript {input.rscript}"
+            " --real {input.real}"
+            " --outfile {output.outfile}"
+            " --plotfile {output.plotfile}"
+            " {input.net}"
+
 rule plot:
     input:
         rscript = "plot_{region}.r",
