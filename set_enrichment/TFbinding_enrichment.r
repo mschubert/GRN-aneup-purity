@@ -20,6 +20,8 @@ args = sys$cmd$parse(
     arg('net', 'networks', arity='*', rep('../networks/aracne/naive/ACC.RData', 2)))
 
 real = unique(io$load(args$real))
+ng = length(unique(unlist(lapply(real, as.character))))
+psbl = 0.5 * (ng-1) * ng
 
 hits = do.call(rbind, strsplit(tools::file_path_sans_ext(args$net), "/")) %>%
     `[`(,c(ncol(.):1)) %>%
@@ -35,6 +37,7 @@ hits = do.call(rbind, strsplit(tools::file_path_sans_ext(args$net), "/")) %>%
 save(hits, file=args$outfile)
 
 p = ggplot(hits, aes(x=FP, y=TP, color=method)) +
+    geom_abline(slope=nrow(real)/psbl, color="grey", linetype="dashed") +
     geom_line() +
     facet_grid(expr ~ cohort) +
     theme(axis.text.x = element_text(angle=45, hjust=1))
