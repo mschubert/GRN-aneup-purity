@@ -10,7 +10,8 @@ subworkflow net:
 
 rule all:
     input:
-        expand("plot_{region}.pdf", region=config['set_enrichment'])
+        expand("plot_{region}.pdf", region=config['set_enrichment']),
+        "TFbinding_enrichment.pdf"
 
 rule TFbinding_enrichment:
     input:

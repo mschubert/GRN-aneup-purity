@@ -16,7 +16,7 @@ args = sys$cmd$parse(
 
 res = do.call(rbind, strsplit(tools::file_path_sans_ext(args$infiles), "[/_]")) %>%
     `[`(,c(ncol(.):1)) %>%
-    as_tibble() %>%
+    as_tibble(.name_repair="unique") %>%
     transmute(regions = ...4,
               method = ...3,
               expr = ...2,
