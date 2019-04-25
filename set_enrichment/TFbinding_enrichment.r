@@ -34,8 +34,10 @@ hits = do.call(rbind, strsplit(tools::file_path_sans_ext(args$net), "/")) %>%
 
 save(hits, file=args$outfile)
 
-pdf(args$plotfile, 12, 8)
-ggplot(hits, aes(x=FP, y=TP, color=method)) +
+p = ggplot(hits, aes(x=FP, y=TP, color=method)) +
     geom_line() +
-    facet_grid(expr ~ cohort)
+    facet_grid(expr ~ cohort) +
+    theme(axis.text.x = element_text(angle=45, hjust=1))
+pdf(args$plotfile, 12, 8)
+print(p)
 dev.off()
