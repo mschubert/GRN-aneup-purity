@@ -17,7 +17,7 @@ rule TFbinding_enrichment:
         rscript = "TFbinding_enrichment.r",
         real = "../networks/TFbinding/naive/ACC.RData", # same for all
         net = net(expand("{method}/{correction}/{cohort}.RData",
-                 method=set(config['methods']) - set("TFbinding"),
+                 method=[x for x in config['methods'] if x != "TFbinding"],
                  correction=config['correction'], cohort=config['cohorts']))
     output:
         outfile = "TFbinding_enrichment.RData",
