@@ -9,8 +9,8 @@ check_hits = function(net, real) {
     re = c(paste(as.character(net[[1]]), as.character(net[[2]])),
            paste(as.character(net[[2]]), as.character(net[[1]]))) %in%
         paste(as.character(real[[1]]), as.character(real[[2]])) + 0
-    roc = data.frame(TP = cumsum(re), FP = cumsum(1-re))
-    roc2 = roc[re != 0 | c(re[-1], 1) != 0,]
+    roc = data.frame(TP = c(0,cumsum(re)), FP = c(0,cumsum(1-re)))
+    roc2 = roc[re != 0 | c(1,re[-c(1,2)], 1) != 0,]
 }
 
 args = sys$cmd$parse(
