@@ -24,7 +24,7 @@ rule network:
         data = "{method}/{correction}/{cohort}.RData"
     resources:
         mem = lambda wc: mem[wc.method] if wc.method in mem.keys() else 40960,
-        walltime = 4*24*60
+        walltime = 7*24*60 # 3 days max for 'short' on peregrine
     shell:
         "Rscript {input.rscript}"
             " --cohort {wildcards.cohort}"

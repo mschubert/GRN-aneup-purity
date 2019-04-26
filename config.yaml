@@ -10,8 +10,8 @@ methods:
     - genenet
     - aracne
     - TFbinding
-#    - Genie3.wrap
-#    - GeneNet.wrap
+    - Genie3.wrap
+    - GeneNet.wrap
     - mrnetb.wrap
     - mutrank.wrap
     - pcit.wrap
