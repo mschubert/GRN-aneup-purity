@@ -22,7 +22,10 @@ args = sys$cmd$parse(
 
 real = unique(io$load(args$real))
 ng = io$load(args$ng) %>%
-    mutate(slope = nrow(real)/psbl)
+    mutate(slope = nrow(real)/psbl,
+           slope_tf = nrow(real)/psbl_tf) %>%
+    select(cohort, expr, slope, slope_tf) %>%
+    tidyr::gather("kind", "slope", -cohort, -expr)
 
 hits = do.call(rbind, strsplit(tools::file_path_sans_ext(args$net), "/")) %>%
     `[`(,c(ncol(.):1)) %>%
