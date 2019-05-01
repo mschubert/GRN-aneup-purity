@@ -11,6 +11,13 @@ mem = {
     'GeneNet.wrap' : 102400
 }
 
+cores = {
+    'Genie3' : 10,
+    'Genie3+TF' : 10,
+    'Tigress' : 10,
+    'Tigress+TF': 10
+}
+
 rule all:
     input:
         expand("{method}/{correction}/{cohort}.RData", method=config['methods'],
@@ -27,6 +34,8 @@ rule network:
     resources:
         mem = lambda wc: mem[wc.method] if wc.method in mem.keys() else 40960,
         walltime = 7*24*60 # 3 days max for 'short' on peregrine
+    threads:
+        lambda wc: cores[wc.method] if wc.method in cores.keys() else 1,
     shell:
         "Rscript {input.rscript}"
             " --cohort {wildcards.cohort}"
@@ -35,3 +44,4 @@ rule network:
             " --tf_annot {input.tf_annot}"
             " --tf_binding {input.tf_binding}"
             " --outfile {output.data}"
+            " --cores {threads}"
