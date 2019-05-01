@@ -9,6 +9,8 @@ args = sys$cmd$parse(
     opt('e', 'expr', 'expression matrix RData', '../data/expr_copycor/ACC.RData'),
     opt('s', 'select', 'top N links max', '1e6'),
     opt('m', 'method', 'method identifier', 'aracne'),
+    opt('a', 'tf_annot', 'RData', '../data/tf_annot.RData'),
+    opt('b', 'tf_binding', 'RData', '../data/tf_binding.RData'),
     opt('o', 'outfile', '.RData to save to', 'aracne/copycor/ACC.RData'))
 
 expr = io$load(args$expr)
@@ -16,11 +18,7 @@ top_n = as.integer(args$select)
 
 switch(args$method,
     "aracne" = {
-        gset = import('data/genesets')
-        tfs = gset$go() %>%
-            filter(id == "GO:0003700") %>%
-            pull(hgnc_symbol)
-
+        tfs = io$load(args$tf_annot)
         ar = import('tools/aracne')
         bs = 100
         clustermq::register_dopar_cmq(n_jobs=bs, memory=10240)
@@ -35,10 +33,7 @@ switch(args$method,
             arrange(qval, pval)
     },
     "TFbinding" = {
-        enr = import('tools/enrichr')
-        sets = enr$genes("ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X")
-        names(sets) = sub("_[^_]+$", "", names(sets))
-
+        sets = io$load(args$tf_binding)
         net = stack(sets)[c(2,1)]
         colnames(net) = c("Regulator", "Target")
     },

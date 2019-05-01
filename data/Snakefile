@@ -17,14 +17,27 @@ rule all:
 rule ng:
     input:
         rscript = "ng.r",
+        annot = "tf_annot.RData",
         expr = expand("expr_{correction}/{cohort}.RData",
                 correction=config['correction'], cohort=config['cohorts'])
     output:
         outfile = "ng.RData"
     shell:
         "Rscript {input.rscript}"
+            " --annot {input.annot}"
             " --outfile {output.outfile}"
             " {input.expr}"
+
+rule tf:
+    input:
+        rscript = "tf.r"
+    output:
+        annot = "tf_annot.RData",
+        binding = "tf_binding.RData"
+    shell:
+        "Rscript {input.rscript}"
+            " --annot {output.annot}"
+            " --binding {output.binding}"
 
 rule expr:
     input:

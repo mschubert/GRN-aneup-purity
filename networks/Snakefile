@@ -19,7 +19,9 @@ rule all:
 rule network:
     input:
         rscript = "network.r",
-        expr = data("expr_{correction}/{cohort}.RData")
+        expr = data("expr_{correction}/{cohort}.RData"),
+        tf_annot = data("tf_annot.RData"),
+        tf_binding = data("tf_binding.RData")
     output:
         data = "{method}/{correction}/{cohort}.RData"
     resources:
@@ -30,4 +32,6 @@ rule network:
             " --cohort {wildcards.cohort}"
             " --expr {input.expr}"
             " --method {wildcards.method}"
+            " --tf_annot {input.tf_annot}"
+            " --tf_binding {input.tf_binding}"
             " --outfile {output.data}"
