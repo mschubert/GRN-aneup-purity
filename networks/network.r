@@ -11,12 +11,10 @@ args = sys$cmd$parse(
     opt('m', 'method', 'method identifier', 'aracne'),
     opt('a', 'tf_annot', 'RData', '../data/tf_annot.RData'),
     opt('b', 'tf_binding', 'RData', '../data/tf_binding.RData'),
-    opt('o', 'outfile', '.RData to save to', 'aracne/copycor/ACC.RData'),
-    opt('p', 'parallel', 'number of cores', '1'))
+    opt('o', 'outfile', '.RData to save to', 'aracne/copycor/ACC.RData'))
 
 expr = io$load(args$expr)
-tfs = io$load(args$tf_annot)
-cores = as.integer(args$parallel)
+tfs = intersect(io$load(args$tf_annot), rownames(expr))
 
 switch(args$method,
     "aracne" = {
@@ -34,26 +32,44 @@ switch(args$method,
             arrange(qval, pval)
     },
     "Genie3" = {
-        net = GENIE3::GENIE3(expr, nCores=cores) %>%
+        clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
+        net = GENIE3::GENIE3(expr, verbose=TRUE) %>%
             GENIE3::getLinkList() %>%
+            filter(weight != 0) %>%
             arrange(-weight) %>%
             transmute(Regulator = regulatoryGene,
                       Target = targetGene,
                       score = weight)
     },
     "Genie3+TF" = {
-        net = GENIE3::GENIE3(expr, regulators=tfs, nCores=cores) %>%
+        clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
+        net = GENIE3::GENIE3(expr, regulators=tfs, verbose=TRUE) %>%
             GENIE3::getLinkList() %>%
+            filter(weight != 0) %>%
             arrange(-weight) %>%
             transmute(Regulator = regulatoryGene,
                       Target = targetGene,
                       score = weight)
     },
     "Tigress" = {
-        net = tigress::tigress(t(expr), usemulticore=cores)
+        clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
+        net = tigress::tigress(t(expr), allsteps=FALSE, verb=TRUE, usemulticore=TRUE) %>%
+            reshape2::melt() %>%
+            transmute(Regulator = Var1,
+                      Target = Var2,
+                      score = value) %>%
+            filter(score != 0) %>%
+            arrange(-score)
     },
     "Tigress+TF" = {
-        net = tigress::tigress(t(expr), tflist=tfs, usemulticore=cores)
+        clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
+        net = tigress::tigress(t(expr), tflist=tfs, allsteps=FALSE, verb=TRUE usemulticore=TRUE) %>%
+            reshape2::melt() %>%
+            transmute(Regulator = Var1,
+                      Target = Var2,
+                      score = value) %>%
+            filter(score != 0) %>%
+            arrange(-score)
     },
     "TFbinding" = {
         sets = io$load(args$tf_binding)

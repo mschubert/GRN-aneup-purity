@@ -11,13 +11,6 @@ mem = {
     'GeneNet.wrap' : 102400
 }
 
-cores = {
-    'Genie3' : 10,
-    'Genie3+TF' : 10,
-    'Tigress' : 10,
-    'Tigress+TF': 10
-}
-
 rule all:
     input:
         expand("{method}/{correction}/{cohort}.RData", method=config['methods'],
@@ -33,9 +26,7 @@ rule network:
         data = "{method}/{correction}/{cohort}.RData"
     resources:
         mem = lambda wc: mem[wc.method] if wc.method in mem.keys() else 40960,
-        walltime = 7*24*60 # 3 days max for 'short' on peregrine
-    threads:
-        lambda wc: cores[wc.method] if wc.method in cores.keys() else 1,
+        walltime = 3*24*60 # 3 days max for 'short' on peregrine
     shell:
         "Rscript {input.rscript}"
             " --cohort {wildcards.cohort}"
