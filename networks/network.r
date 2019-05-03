@@ -63,7 +63,7 @@ switch(args$method,
     },
     "Tigress+TF" = {
         clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
-        net = tigress::tigress(t(expr), tflist=tfs, allsteps=FALSE, verb=TRUE usemulticore=TRUE) %>%
+        net = tigress::tigress(t(expr), tflist=tfs, allsteps=FALSE, verb=TRUE, usemulticore=TRUE) %>%
             reshape2::melt() %>%
             transmute(Regulator = Var1,
                       Target = Var2,
