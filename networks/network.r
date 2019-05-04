@@ -32,7 +32,7 @@ switch(args$method,
             arrange(qval, pval)
     },
     "Genie3" = {
-        clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
+        clustermq::register_dopar_cmq(n_jobs=200, memory=2048)
         net = GENIE3::GENIE3(expr, verbose=TRUE) %>%
             GENIE3::getLinkList() %>%
             filter(weight != 0) %>%
@@ -52,7 +52,7 @@ switch(args$method,
                       score = weight)
     },
     "Tigress" = {
-        clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
+        clustermq::register_dopar_cmq(n_jobs=500, memory=8192)
         net = tigress::tigress(t(expr), allsteps=FALSE, verb=TRUE, usemulticore=TRUE) %>%
             reshape2::melt() %>%
             transmute(Regulator = Var1,
@@ -62,7 +62,7 @@ switch(args$method,
             arrange(-score)
     },
     "Tigress+TF" = {
-        clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
+        clustermq::register_dopar_cmq(n_jobs=200, memory=8192)
         net = tigress::tigress(t(expr), tflist=tfs, allsteps=FALSE, verb=TRUE, usemulticore=TRUE) %>%
             reshape2::melt() %>%
             transmute(Regulator = Var1,
