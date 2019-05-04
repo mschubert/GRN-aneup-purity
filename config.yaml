@@ -20,7 +20,7 @@ methods:
     - zscore.wrap
     - Genie3
     - Genie3+TF
-    - Tigress
+#    - Tigress
     - Tigress+TF
 
 set_enrichment:
