@@ -11,6 +11,10 @@ args = sys$cmd$parse(
 
 cohorts = tcga$cohorts()
 
+samples = lapply(cohorts, tcga$aneuploidy) %>%
+    setNames(cohorts) %>%
+    bind_rows(.id="cohort")
+
 estimate = lapply(cohorts, tcga$cna_chrs) %>%
     setNames(cohorts)
 
@@ -22,4 +26,4 @@ sets = seq$coords$gene("hgnc_symbol", chromosomes=c(1:22,'X')) %>%
     setNames(data, chromosome_name) %>%
     lapply(function(s) s$gene)
 
-save(estimate, sets, file=args$outfile)
+save(samples, estimate, sets, file=args$outfile)
