@@ -20,8 +20,14 @@ args = sys$cmd$parse(
 
 segs = readxl::read_xlsx(args$infile, skip=19) %>%
     setNames(make.names(colnames(.))) %>%
-    select(name=Identifier, cohort=Cancer.Type, chr, start, stop, Contained.genes) %>%
-    split(.$cohort)
+    select(name=Identifier, cohort=Cancer.Type, chr, start, stop, Contained.genes)
+
+sums = segs %>%
+    group_by(cohort) %>%
+    summarize(n_regions = dplyr::n(),
+              bases = sum(abs(start - stop)))
+
+segs = split(segs, segs$cohort)
 segs$COAD = segs$READ = segs$`COAD/READ`
 segs$`COAD/READ` = NULL
 segs$PANCAN = NULL # can not get CNVs using TCGA API here
@@ -29,4 +35,4 @@ segs$PANCAN = NULL # can not get CNVs using TCGA API here
 estimate = mapply(cohort_cnas, cohort=names(segs), segs=segs)
 sets = lapply(segs, cohort_genes)
 
-save(estimate, sets, file=args$outfile)
+save(sums, estimate, sets, file=args$outfile)
