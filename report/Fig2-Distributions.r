@@ -25,10 +25,16 @@ anp = aneup$samples %>%
 
 p11 = plot_spacer() # ..focal..
 p12 = ggplot(anp, aes(x=forcats::fct_reorder(cohort, aneuploidy), y=aneuploidy)) +
-    geom_boxplot(outlier.shape=NA)
+    geom_boxplot(outlier.shape=NA) +
+    labs(tag = "b") +
+    theme(axis.text.x = element_text(angle=60, hjust=1),
+                 axis.title.x = element_blank())
 p13 = ggplot(pur, aes(x=forcats::fct_reorder(cohort, purity), y=purity)) +
     geom_bar(stat="summary", fun.y="mean") +
-    ylim(0, 1)
+    ylim(0, 1) +
+    labs(tag = "c") +
+    theme(axis.text.x = element_text(angle=60, hjust=1),
+                 axis.title.x = element_blank())
 p11 = p12 #FIXME:
 
 
@@ -57,7 +63,8 @@ p21 = ggplot(df) +
     guides(fill=FALSE) +
     scale_x_continuous(trans="log2", breaks=1:9) +
     scale_y_discrete(labels=y_labels) +
-    labs(x = "DNA copies of segment",
+    labs(tag = "d",
+         x = "DNA copies of segment",
          y = "Regions of focal amplification/deletion (RACS)")
 
 p22 = ggplot(ng) +
@@ -100,7 +107,8 @@ p31 = ggplot(df) +
     guides(fill=FALSE) +
     scale_x_continuous(trans="log2", breaks=2:3) +
     scale_y_discrete(labels=y_labels) +
-    labs(x = "Ploidy (number of chromosomes)",
+    labs(tag = "e",
+         x = "Ploidy (number of chromosomes)",
          y = "Chromosome")
 
 p32 = ggplot(ng) +
@@ -121,10 +129,7 @@ p3 = p31 + p32 + plot_layout(nrow=1, widths=c(5, 1)) & theme(plot.margin = unit(
 ###
 ### Assemble
 ###
-top = p11 + p12 + p13 + plot_layout(nrow=1) &
-    theme(axis.text.x = element_text(angle=60, hjust=1),
-          axis.title.x = element_blank())
-bottom = p2 + p3 + plot_layout(nrow=1)
-pdf("Fig2-Distributions.pdf", 12, 12)
-top / bottom + plot_layout(heights=c(1,3))
+pdf("Fig2-Distributions.pdf", 12, 16)
+(p11 | p12 | p13) /
+(p2 | p3) + plot_layout(heights=c(1,3))
 dev.off()
