@@ -22,21 +22,28 @@ anp = aneup$samples %>%
     filter(cohort %in% cohorts,
            substr(Sample, 14, 15) %in% c("01", "02", "03")) # primary, recurrent, metastasis
 #    tcga$filter(along="Sample", cancer=TRUE)
+focs = focal$sums %>%
+    filter(cohort %in% cohorts | cohort == "COAD/READ")
 
-p11 = plot_spacer() # ..focal..
+p11 = ggplot(focs, aes(x=n_regions, y=bases)) +
+    geom_point() +
+    ggrepel::geom_text_repel(aes(label=cohort)) +
+    labs(x = "Number of regions",
+         y = "Bases covered",
+         tag = "a")
 p12 = ggplot(anp, aes(x=forcats::fct_reorder(cohort, aneuploidy), y=aneuploidy)) +
     geom_boxplot(outlier.shape=NA) +
-    labs(tag = "b") +
+    labs(y = "Aneuploidy",
+         tag = "b") +
     theme(axis.text.x = element_text(angle=60, hjust=1),
                  axis.title.x = element_blank())
 p13 = ggplot(pur, aes(x=forcats::fct_reorder(cohort, purity), y=purity)) +
     geom_bar(stat="summary", fun.y="mean") +
     ylim(0, 1) +
-    labs(tag = "c") +
+    labs(y = "Purity",
+         tag = "c") +
     theme(axis.text.x = element_text(angle=60, hjust=1),
                  axis.title.x = element_blank())
-p11 = p12 #FIXME:
-
 
 ###
 ### Focal sample distribution
