@@ -5,6 +5,7 @@
 data/genome/*
 
 ### general
+*.png
 *.out
 *.xls[x]
 *.odt
