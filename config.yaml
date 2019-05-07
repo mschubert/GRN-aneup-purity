@@ -10,8 +10,6 @@ methods:
     - genenet
     - aracne
     - TFbinding
-#    - Genie3.wrap
-#    - GeneNet.wrap
     - mrnetb.wrap
     - mutrank.wrap
     - pcit.wrap
@@ -20,6 +18,10 @@ methods:
     - aracne.wrap
     - c3net.wrap
     - zscore.wrap
+    - Genie3
+    - Genie3+TF
+#    - Tigress
+    - Tigress+TF
 
 set_enrichment:
     - focal

@@ -15,11 +15,12 @@ args = sys$cmd$parse(
         list.files(".", "\\.RData", recursive=TRUE, full.names=TRUE)))
 
 res = do.call(rbind, strsplit(tools::file_path_sans_ext(args$infiles), "[/_]")) %>%
-    as.data.frame() %>%
-    transmute(regions = V2,
-              method = V3,
-              expr = V4,
-              cohort = V5,
+    `[`(,c(ncol(.):1)) %>%
+    as_tibble(.name_repair="unique") %>%
+    transmute(regions = ...4,
+              method = ...3,
+              expr = ...2,
+              cohort = ...1,
               data = io$load(args$infiles)) %>%
     tidyr::unnest() %>%
     mutate(affected = purrr::map2(estimate, links, affected)) %>%
