@@ -1,7 +1,11 @@
 library(dplyr)
 library(cowplot)
+library(patchwork)
 io = import('io')
 
+###
+### Overview of genes, TFs, samples, etc. of DREAM4 vs. DREAM5 vs. TCGA
+###
 ng = io$load("../data/ng.RData")
 tfa = io$load("../data/tf_annot.RData")
 tfb = io$load("../data/tf_binding.RData")
@@ -22,11 +26,65 @@ both = ng %>%
     bind_rows(dream) %>%
     tidyr::gather("field", "value", -net, -collec)
 
-p = ggplot(both, aes(y=net, x=value)) +
+p11 = ggplot(both, aes(y=net, x=value)) +
     ggstance::geom_colh() +
     geom_text(aes(label=value, x=0), hjust=-0.5) +
-    facet_grid(collec~field, scales="free", space="free_y")
+    facet_grid(collec~field, scales="free", space="free_y") +
+    labs(tag = "b") +
+    theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.text.x = element_text(angle=60, hjust=1))
 
-pdf("Fig1-TFs.pdf", 12, 6)
-print(p)
+###
+### TF annot. vs. binding vs. all genes
+###
+ng = 22000
+tfa = length(tfa)
+tgb = length(unique(unlist(tfb)))
+tfb = length(tfb)
+rects = matrix(nrow=4, dimnames=list(c("xmin", "ymin", "xmax", "ymax"), NULL), c(
+    0,0, ng,ng, # all gene conntections
+    0,0+6000, ng,tfa+6000, # annotated TFs x genes
+#    0,0, tgb,tfb, # binding TFs x bound genes
+    0,0, 100, 100, # dream4
+    0,0, dream[[1,"ng"]], dream[[1,"ntf"]], # dream5 in silico
+    0,0, dream[[2,"ng"]], dream[[2,"ntf"]], # dream5 e. coli
+    0,0, dream[[3,"ng"]], dream[[3,"ntf"]], # dream5 s. cervisiae
+NULL)) %>% t() %>% as.data.frame()
+rects[3:6,c('xmin','xmax')] = rects[3:6,c('xmin','xmax')] + 1000
+rects[3:6,c('ymin','ymax')] = rects[3:6,c('ymin','ymax')] + rep(1:4, length.out=8) * 1500 + 10000
+rects = rects %>%
+    mutate(color = letters[1:nrow(rects)],
+           txt = c("All genes", "Annotated TFs x genes", "DREAM 4", paste(dream$collec, dream$net)[1:3]),
+           txtx = xmax + 1000,
+           txty = mapply(function(x,y) mean(c(x,y)), ymin, ymax))
+rects[1:2,'txtx'] = 1000
+rects[1,'txty'] = 3000
+
+p12 = ggplot(rects) +
+    geom_rect(aes(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax, fill=color), color="black", alpha=0.8) +
+    geom_text(aes(label=txt, x=txtx, y=txty), vjust=0.5, hjust=0) +
+    coord_fixed() +
+    guides(fill=FALSE) +
+    labs(x = "Number of genes",
+         y = "Number of regulators",
+         tag = "a")
+
+###
+### Comparison of inferred networks with vs. without TFs
+###
+perf = io$load("../set_enrichment/TFbinding_enrichment.RData")
+#hits = perf$hits %>%
+#    filter(...)
+#slope = perf$ng %>%
+#    filter(...)
+
+p2 = ggplot(hits, aes(x=FP, y=TP, color=method)) +
+    geom_abline(data=slope, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
+    geom_line() +
+    facet_grid(expr ~ cohort) +
+    theme(axis.text.x = element_text(angle=45, hjust=1))
+
+pdf("Fig1-TFs.pdf", 14, 5)
+(p12 | p11) + plot_layout(widths=c(1,2))
 dev.off()
