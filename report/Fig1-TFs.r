@@ -8,7 +8,7 @@ tfb = io$load("../data/tf_binding.RData")
 
 dream = data.frame(
     collec = c(rep("DREAM 5", 3), rep("DREAM 4", 5)),
-    net = c("in-silico", "E. coli", "S. cervisiae", paste("network", 1:5)),
+    net = c("In-silico (1)", "E. coli (2)", "S. cervisiae (3)", paste("Network", 1:5)),
     ng = c(1643, 4511, 5950, rep(100, 5)),
     ntf = c(195, 334, 333, rep(100, 5)),
     nsmp = c(805, 805, 536, rep(100, 5)),
