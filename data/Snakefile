@@ -18,6 +18,7 @@ rule ng:
     input:
         rscript = "ng.r",
         annot = "tf_annot.RData",
+        binding = "tf_binding.RData",
         expr = expand("expr_{correction}/{cohort}.RData",
                 correction=config['correction'], cohort=config['cohorts'])
     output:
@@ -25,6 +26,7 @@ rule ng:
     shell:
         "Rscript {input.rscript}"
             " --annot {input.annot}"
+            " --binding {input.binding}"
             " --outfile {output.outfile}"
             " {input.expr}"
 
