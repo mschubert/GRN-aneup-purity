@@ -9,7 +9,7 @@ mem = {
     'aracne' : 10240,
     'genenet' : 102400,
     'GeneNet.wrap' : 102400,
-    'Genie3' : 81920
+    'Genie3' : 122880
 }
 
 rule all:
