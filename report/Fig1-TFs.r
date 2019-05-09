@@ -82,12 +82,12 @@ slope = filter(perf$ng, expr == "naive")
 
 p2 = ggplot(hits, aes(x=size, y=TP, color=method)) +
     geom_rect(data=hl, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),
-              inherit.aes=FALSE, fill="#F0E8D8") +
+              inherit.aes=FALSE, fill="#F0E8D8", color="black", linetype="dotted") +
     geom_abline(data=slope, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
     geom_line() +
     facet_wrap(~cohort, nrow=1) +
     labs(x = "",
-         y = "TF:TG recovered"
+         y = "TF:TG recovered",
          tag = "c") +
     theme(axis.text.x = element_text(angle=45, hjust=1))
 
@@ -97,7 +97,7 @@ p3 = ggplot(hitsTF, aes(x=size, y=TP, color=method)) +
     ylim(c(0, hl$ymax)) +
     facet_wrap(~cohort, nrow=1) +
     labs(x = "Edges in network",
-         y = "TF:TG recovered"
+         y = "TF:TG recovered",
          tag = "d") +
     theme(axis.text.x = element_text(angle=45, hjust=1),
           panel.background = element_rect(fill="#F0E8D8"))
