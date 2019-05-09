@@ -75,25 +75,32 @@ p12 = ggplot(rects) +
 ### Comparison of inferred networks with vs. without TFs
 ###
 perf = io$load("../set_enrichment/TFbinding_enrichment.RData")
-hits = filter(perf$hits, expr == "naive", size<=1e6)
-hitsTF = filter(hits, method %in% c("aracne", "Genie3+TF", "Tigress+TF"), size<=2e5)
+hits = filter(perf$hits, expr == "naive", size<=2e6)
+hl = data.frame(xmin=0, ymin=0, xmax=2e5, ymax=1200)
+hitsTF = filter(hits, method %in% c("aracne", "Genie3+TF", "Tigress+TF"), size<=hl$xmax)
 slope = filter(perf$ng, expr == "naive")
 
 p2 = ggplot(hits, aes(x=size, y=TP, color=method)) +
+    geom_rect(data=hl, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),
+              inherit.aes=FALSE, fill="#F0E8D8") +
     geom_abline(data=slope, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
     geom_line() +
-    ylim(c(0, 5000)) +
     facet_wrap(~cohort, nrow=1) +
-    labs(tag = "c") +
+    labs(x = "",
+         y = "TF:TG recovered"
+         tag = "c") +
     theme(axis.text.x = element_text(angle=45, hjust=1))
 
 p3 = ggplot(hitsTF, aes(x=size, y=TP, color=method)) +
     geom_abline(data=slope, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
     geom_line() +
-    ylim(c(0, 2000)) +
+    ylim(c(0, hl$ymax)) +
     facet_wrap(~cohort, nrow=1) +
-    labs(tag = "d") +
-    theme(axis.text.x = element_text(angle=45, hjust=1))
+    labs(x = "Edges in network",
+         y = "TF:TG recovered"
+         tag = "d") +
+    theme(axis.text.x = element_text(angle=45, hjust=1),
+          panel.background = element_rect(fill="#F0E8D8"))
 
 pdf("Fig1-TFs.pdf", 14, 12)
 ({ (p12 | p11) + plot_layout(widths=c(1,2)) } / p2 / p3 ) + plot_layout(heights=c(3,2,2))
