@@ -55,7 +55,8 @@ rects[3:6,c('xmin','xmax')] = rects[3:6,c('xmin','xmax')] + 1000
 rects[3:6,c('ymin','ymax')] = rects[3:6,c('ymin','ymax')] + rep(1:4, length.out=8) * 1500 + 10000
 rects = rects %>%
     mutate(color = letters[1:nrow(rects)],
-           txt = c("All genes", "Annotated TFs x genes", "DREAM 4", paste(dream$collec, dream$net)[1:3]),
+           txt = c("All human genes", "Annotated human TFs x genes",
+                   "DREAM 4", paste(dream$collec, dream$net)[1:3]),
            txtx = xmax + 1000,
            txty = mapply(function(x,y) mean(c(x,y)), ymin, ymax))
 rects[1:2,'txtx'] = 1000
@@ -74,17 +75,26 @@ p12 = ggplot(rects) +
 ### Comparison of inferred networks with vs. without TFs
 ###
 perf = io$load("../set_enrichment/TFbinding_enrichment.RData")
-#hits = perf$hits %>%
-#    filter(...)
-#slope = perf$ng %>%
-#    filter(...)
+hits = filter(perf$hits, expr == "naive", size<=1e6)
+hitsTF = filter(hits, method %in% c("aracne", "Genie3+TF", "Tigress+TF"), size<=2e5)
+slope = filter(perf$ng, expr == "naive")
 
-p2 = ggplot(hits, aes(x=FP, y=TP, color=method)) +
+p2 = ggplot(hits, aes(x=size, y=TP, color=method)) +
     geom_abline(data=slope, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
     geom_line() +
-    facet_grid(expr ~ cohort) +
+    ylim(c(0, 5000)) +
+    facet_wrap(~cohort, nrow=1) +
+    labs(tag = "c") +
     theme(axis.text.x = element_text(angle=45, hjust=1))
 
-pdf("Fig1-TFs.pdf", 14, 5)
-(p12 | p11) + plot_layout(widths=c(1,2))
+p3 = ggplot(hitsTF, aes(x=size, y=TP, color=method)) +
+    geom_abline(data=slope, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
+    geom_line() +
+    ylim(c(0, 2000)) +
+    facet_wrap(~cohort, nrow=1) +
+    labs(tag = "d") +
+    theme(axis.text.x = element_text(angle=45, hjust=1))
+
+pdf("Fig1-TFs.pdf", 14, 12)
+({ (p12 | p11) + plot_layout(widths=c(1,2)) } / p2 / p3 ) + plot_layout(heights=c(3,2,2))
 dev.off()
