@@ -19,6 +19,7 @@ set.seed(as.numeric(args$bootstrap))
 samples = sample(colnames(expr), replace=TRUE)
 expr = expr[,samples]
 tfs = intersect(io$load(args$tf_annot), rownames(expr))
+top_n = as.numeric(args$select)
 
 switch(args$method,
     "aracne" = {
@@ -38,7 +39,7 @@ switch(args$method,
     "Genie3" = {
         clustermq::register_dopar_cmq(n_jobs=200, memory=2048)
         net = GENIE3::GENIE3(expr, verbose=TRUE) %>%
-            GENIE3::getLinkList() %>%
+            GENIE3::getLinkList(reportMax=top_n) %>%
             filter(weight != 0) %>%
             arrange(-weight) %>%
             transmute(Regulator = regulatoryGene,
@@ -48,7 +49,7 @@ switch(args$method,
     "Genie3+TF" = {
         clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
         net = GENIE3::GENIE3(expr, regulators=tfs, verbose=TRUE) %>%
-            GENIE3::getLinkList() %>%
+            GENIE3::getLinkList(reportMax=top_n) %>%
             filter(weight != 0) %>%
             arrange(-weight) %>%
             transmute(Regulator = regulatoryGene,
@@ -93,5 +94,5 @@ switch(args$method,
     }
 )
 
-net = head(net, as.integer(args$select))
+net = head(net, top_n)
 save(samples, net, file=args$outfile)
