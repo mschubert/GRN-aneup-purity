@@ -8,6 +8,9 @@ mem = {
     'TFbinding' : 1024,
     'aracne' : 10240,
     'genenet' : 102400,
+    'mutrank.wrap' : 81920,
+    'clr.wrap' : 61440,
+    'mrnet.wrap' : 61440,
     'GeneNet.wrap' : 102400,
     'Genie3' : 122880
 }
