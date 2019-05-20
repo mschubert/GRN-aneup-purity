@@ -4,6 +4,26 @@ sys = import('sys')
 idmap = import('process/idmap')
 tcga = import('data/tcga')
 
+#' Convert a network matrix to a data.frame listing edges
+#'
+#' @param mat  link scores, high is high confidence (i.e., not p-values)
+#' @return  A data.frame with fields: Regulator, Target, score
+mat2df = function(mat, tfs) {
+    # symmetrise regulators only (or all genes if no tfs)
+    mat[tfs, tfs] = pmax(mat[tfs, tfs], t(mat[tfs, tfs]))
+    # make sure we don't have the same links twice
+    lvls = unique(c(rownames(mat), colnames(mat)))
+    reshape2::melt(mat) %>%
+        transmute(Regulator = factor(Var1, levels=lvls),
+                  Target = factor(Var2, levels=lvls),
+                  score = value) %>%
+        filter(score != 0,
+               as.integer(Regulator) < as.integer(Target)) %>%
+        arrange(-score) %>%
+        mutate(Regulator = as.character(Regulator),
+               Target = as.character(Target))
+}
+
 args = sys$cmd$parse(
     opt('c', 'cohort', 'cohort identifier', 'ACC'),
     opt('e', 'expr', 'expression matrix RData', '../data/expr_copycor/ACC.RData'),
@@ -14,6 +34,7 @@ args = sys$cmd$parse(
     opt('o', 'outfile', '.RData to save to', 'aracne/copycor/ACC.RData'))
 
 expr = io$load(args$expr)
+gs = rownames(expr)
 tfs = intersect(io$load(args$tf_annot), rownames(expr))
 top_n = as.numeric(args$select)
 
@@ -30,47 +51,29 @@ switch(args$method,
     "genenet" = {
         gnet = import('tools/genenet')
         net = gnet$pcor(expr, fdr=0.01) %>%
-            arrange(qval, pval)
+            arrange(qval, pval) %>%
+            dplyr::rename(Regulator = node1,
+                          Target = node2)
     },
     "Genie3" = {
         clustermq::register_dopar_cmq(n_jobs=200, memory=2048)
         net = GENIE3::GENIE3(expr, verbose=TRUE) %>%
-            GENIE3::getLinkList(reportMax=top_n) %>%
-            filter(weight != 0) %>%
-            arrange(-weight) %>%
-            transmute(Regulator = regulatoryGene,
-                      Target = targetGene,
-                      score = weight)
+            mat2df(tfs=gs)
     },
     "Genie3+TF" = {
         clustermq::register_dopar_cmq(n_jobs=100, memory=2048)
         net = GENIE3::GENIE3(expr, regulators=tfs, verbose=TRUE) %>%
-            GENIE3::getLinkList(reportMax=top_n) %>%
-            filter(weight != 0) %>%
-            arrange(-weight) %>%
-            transmute(Regulator = regulatoryGene,
-                      Target = targetGene,
-                      score = weight)
+            mat2df(tfs=tfs)
     },
     "Tigress" = {
         clustermq::register_dopar_cmq(n_jobs=500, memory=8192)
-        net = tigress::tigress(t(expr), allsteps=FALSE, verb=TRUE, usemulticore=TRUE) %>%
-            reshape2::melt() %>%
-            transmute(Regulator = Var1,
-                      Target = Var2,
-                      score = value) %>%
-            filter(score != 0) %>%
-            arrange(-score)
+        net = tigress::tigress(t(expr), allsteps=FALSE, verb=TRUE,
+                   usemulticore=TRUE) %>% mat2df(tfs=gs)
     },
     "Tigress+TF" = {
         clustermq::register_dopar_cmq(n_jobs=200, memory=2048)
-        net = tigress::tigress(t(expr), tflist=tfs, allsteps=FALSE, verb=TRUE, usemulticore=TRUE) %>%
-            reshape2::melt() %>%
-            transmute(Regulator = Var1,
-                      Target = Var2,
-                      score = value) %>%
-            filter(score != 0) %>%
-            arrange(-score)
+        net = tigress::tigress(t(expr), tflist=tfs, allsteps=FALSE,
+                   verb=TRUE, usemulticore=TRUE) %>% mat2df(tfs=tfs)
     },
     "TFbinding" = {
         sets = io$load(args$tf_binding)
@@ -79,13 +82,7 @@ switch(args$method,
     },
     {
         fun = getFromNamespace(args$method, ns="netbenchmark")
-        net = fun(t(expr))
-        net = reshape2::melt(net) %>%
-            transmute(node1 = factor(Var1, levels=colnames(net)),
-                      node2 = factor(Var2, levels=colnames(net)),
-                      score = value) %>%
-            filter(score != 0, as.integer(node1) < as.integer(node2)) %>%
-            arrange(-score)
+        net = fun(t(expr)) %>% mat2df(tfs=gs)
     }
 )
 
