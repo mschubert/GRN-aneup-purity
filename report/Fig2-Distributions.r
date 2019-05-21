@@ -35,14 +35,15 @@ p12 = ggplot(anp, aes(x=forcats::fct_reorder(cohort, aneuploidy), y=aneuploidy))
     geom_boxplot(outlier.shape=NA) +
     labs(y = "Aneuploidy",
          tag = "b") +
-    theme(axis.text.x = element_text(angle=60, hjust=1),
+    theme(axis.text.x = element_text(angle=90, hjust=1),
                  axis.title.x = element_blank())
 p13 = ggplot(pur, aes(x=forcats::fct_reorder(cohort, purity), y=purity)) +
     geom_bar(stat="summary", fun.y="mean") +
+    stat_summary(fun.data=function(x) mean_sdl(x, mult=1), geom="errorbar", width=0.5) +
     ylim(0, 1) +
     labs(y = "Purity",
          tag = "c") +
-    theme(axis.text.x = element_text(angle=60, hjust=1),
+    theme(axis.text.x = element_text(angle=90, hjust=1),
                  axis.title.x = element_blank())
 
 ###
