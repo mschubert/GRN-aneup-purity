@@ -28,14 +28,15 @@ anp = aneup$samples %>%
 #    tcga$filter(along="Sample", cancer=TRUE)
 focs = focal$sums %>%
     filter(cohort %in% cohorts | cohort == "COAD/READ") %>%
-    mutate(hl = factor(cohort, levels=hl))
+    mutate(pct = 100 * bases / 3.234e9,
+           hl = factor(cohort, levels=hl))
 
-p11 = ggplot(focs, aes(x=n_regions, y=bases)) +
+p11 = ggplot(focs, aes(x=n_regions, y=pct)) +
     geom_point(aes(color=hl), size=2) +
     ggrepel::geom_text_repel(aes(label=cohort)) +
     guides(color=FALSE) +
     labs(x = "Number of regions",
-         y = "Bases covered",
+         y = "% genome covered",
          tag = "a")
 p12 = ggplot(anp, aes(x=forcats::fct_reorder(cohort, aneuploidy), y=aneuploidy)) +
     geom_boxplot(aes(fill=hl), outlier.shape=NA) +
