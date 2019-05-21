@@ -75,7 +75,7 @@ p12 = ggplot(rects) +
 ### Comparison of inferred networks with vs. without TFs
 ###
 perf = io$load("../set_enrichment/TFbinding_enrichment.RData")
-hits = filter(perf$hits, expr == "naive", size<=2e6)
+hits = filter(perf$hits, expr == "naive", size<=1.5e6)
 hl = data.frame(xmin=0, ymin=0, xmax=2e5, ymax=1200)
 hitsTF = filter(hits, method %in% c("aracne", "Genie3+TF", "Tigress+TF"), size<=hl$xmax)
 slope = filter(perf$ng, expr == "naive")
@@ -99,8 +99,8 @@ p3 = ggplot(hitsTF, aes(x=size, y=TP, color=method)) +
     labs(x = "Edges in network",
          y = "TF:TG recovered",
          tag = "d") +
-    theme(axis.text.x = element_text(angle=45, hjust=1),
-          panel.background = element_rect(fill="#F0E8D8"))
+    theme(axis.text.x = element_text(angle=45, hjust=1))
+#          panel.background = element_rect(fill="#F0E8D8"))
 
 pdf("Fig1-TFs.pdf", 14, 12)
 ({ (p12 | p11) + plot_layout(widths=c(1,2)) } / p2 / p3 ) + plot_layout(heights=c(3,2,2))
