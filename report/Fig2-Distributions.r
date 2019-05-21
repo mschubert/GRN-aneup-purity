@@ -8,8 +8,7 @@ config = io$read_yaml("../config.yaml")
 focal = io$load("../data/focal.RData")
 aneup = io$load("../data/aneup.RData")
 purity = io$load('../data/purity.RData')
-
-hl = c("ACC", "BRCA", "COAD", "HNSC", "PRAD", "SKCM")
+hl = config$cohorts
 
 ###
 ### Top row overview across all cohorts

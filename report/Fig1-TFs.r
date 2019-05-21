@@ -6,6 +6,7 @@ io = import('io')
 ###
 ### Overview of genes, TFs, samples, etc. of DREAM4 vs. DREAM5 vs. TCGA
 ###
+config = io$read_yaml("../config.yaml")
 ng = io$load("../data/ng.RData")
 tfa = io$load("../data/tf_annot.RData")
 tfb = io$load("../data/tf_binding.RData")
@@ -19,12 +20,21 @@ dream = data.frame(
     nint = c(4012, 2066, 3940, 176, 249, 195, 211, 193)
 )
 
+lookup = c(
+    ng = "# Genes",
+    nsmp = "# Samples",
+    ntf = "# TFs",
+    nint = "# Interactions"
+)
+
 both = ng %>%
     transmute(collec = "TCGA",
               net = cohort,
               ng = ng, ntf=ntf, nsmp=nsmp, nint=nint) %>%
     bind_rows(dream) %>%
-    tidyr::gather("field", "value", -net, -collec)
+    tidyr::gather("field", "value", -net, -collec) %>%
+    mutate(net = factor(net, levels=rev(c(config$cohorts, dream$net))),
+           field = factor(lookup[field], levels=lookup))
 
 p11 = ggplot(both, aes(y=net, x=value)) +
     ggstance::geom_colh() +
