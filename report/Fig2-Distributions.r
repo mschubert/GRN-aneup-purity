@@ -9,6 +9,8 @@ focal = io$load("../data/focal.RData")
 aneup = io$load("../data/aneup.RData")
 purity = io$load('../data/purity.RData')
 
+hl = c("ACC", "BRCA", "COAD", "HNSC", "PRAD", "SKCM")
+
 ###
 ### Top row overview across all cohorts
 ###
@@ -16,33 +18,39 @@ pur = lapply(purity$estimate, reshape2::melt) %>%
     bind_rows(.id = "cohort") %>%
     transmute(cohort = cohort,
               Sample = Var1,
-              purity = value)
+              purity = value,
+              hl = factor(cohort, levels=hl))
 cohorts = unique(pur$cohort)
 anp = aneup$samples %>%
     filter(cohort %in% cohorts,
-           substr(Sample, 14, 15) %in% c("01", "02", "03")) # primary, recurrent, metastasis
+           substr(Sample, 14, 15) %in% c("01", "02", "03")) %>% # primary, recurrent, metastasis
+    mutate(hl = factor(cohort, levels=hl))
 #    tcga$filter(along="Sample", cancer=TRUE)
 focs = focal$sums %>%
-    filter(cohort %in% cohorts | cohort == "COAD/READ")
+    filter(cohort %in% cohorts | cohort == "COAD/READ") %>%
+    mutate(hl = factor(cohort, levels=hl))
 
 p11 = ggplot(focs, aes(x=n_regions, y=bases)) +
-    geom_point() +
+    geom_point(aes(color=hl), size=2) +
     ggrepel::geom_text_repel(aes(label=cohort)) +
+    guides(color=FALSE) +
     labs(x = "Number of regions",
          y = "Bases covered",
          tag = "a")
 p12 = ggplot(anp, aes(x=forcats::fct_reorder(cohort, aneuploidy), y=aneuploidy)) +
-    geom_boxplot(outlier.shape=NA) +
+    geom_boxplot(aes(fill=hl), outlier.shape=NA) +
+    guides(fill=FALSE) +
     labs(y = "Aneuploidy",
          tag = "b") +
     theme(axis.text.x = element_text(angle=90, hjust=1),
                  axis.title.x = element_blank())
 p13 = ggplot(pur, aes(x=forcats::fct_reorder(cohort, purity), y=purity)) +
-    geom_bar(stat="summary", fun.y="mean") +
+    geom_bar(aes(fill=hl), stat="summary", fun.y="mean") +
     stat_summary(fun.data=function(x) mean_sdl(x, mult=1), geom="errorbar", width=0.5) +
     ylim(0, 1) +
     labs(y = "Purity",
          tag = "c") +
+    guides(fill=FALSE) +
     theme(axis.text.x = element_text(angle=90, hjust=1),
                  axis.title.x = element_blank())
 
