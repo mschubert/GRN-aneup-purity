@@ -52,8 +52,9 @@ switch(args$method,
         gnet = import('tools/genenet')
         net = gnet$pcor(expr, fdr=0.01) %>%
             arrange(qval, pval) %>%
-            dplyr::rename(Regulator = node1,
-                          Target = node2)
+            transmute(Regulator = as.character(node1),
+                      Target = as.character(node2),
+                      pval = pval, qval=qval)
     },
     "Genie3" = {
         clustermq::register_dopar_cmq(n_jobs=200, memory=2048)
