@@ -9,11 +9,17 @@ args = sys$cmd$parse(
     opt('c', 'cohort', 'chr', 'ACC'),
     opt('s', 'sets', 'RData', '../data/focal.RData'),
     opt('m', 'method', 'aracne or genenet', 'aracne'),
+    opt('i', 'min_edges', 'integer', '1e3'),
+    opt('a', 'max_edges', 'integer', '1e6'),
+    opt('t', 'n_steps', 'integer', '15'),
     opt('n', 'network', 'RData', '../networks/aracne/naive/ACC.RData'),
     opt('o', 'outfile', '.RData', 'focal_aracne/naive/ACC.RData'))
 
 net = io$load(args$network)
 valid_genes = unique(c(net$Regulator, net$Target))
+min_edges = as.numeric(args$min_edges)
+max_edges = as.numeric(args$max_edges)
+n_steps = as.numeric(args$n_steps)
 
 if (args$method %in% c("aracne", "TFbinding", "Genie3+TF", "Tigress+TF")) {
     set2possible_links = function(genes, net) {
@@ -70,10 +76,10 @@ calc_net = function(net, co) {
         mutate(fet = purrr::pmap(., do_test)) %>%
         tidyr::unnest()
 }
-cutoff = exp(seq(log(1e3), log(1e6), length.out=15))
+cutoff = exp(seq(log(min_edges), log(max_edges), length.out=n_steps))
 if (nrow(net) < cutoff[length(cutoff)]) {
     cutoff = cutoff[cutoff <= nrow(net)]
-    cutoff = exp(seq(log(1e3), log(nrow(net)), length.out=length(cutoff)))
+    cutoff = exp(seq(log(min_edges), log(nrow(net)), length.out=length(cutoff)))
 }
 res = lapply(cutoff, calc_net, net=net) %>%
     setNames(cutoff) %>%
