@@ -4,7 +4,7 @@ odds = function(df)
     ggplot(df, aes(x=edges, y=estimate, color=method)) +
         geom_hline(yintercept=1, color="black", linetype="dashed") +
         geom_line() +
-        geom_point() +
+        geom_point(size=0.5) +
         facet_grid(expr ~ cohort) +
         scale_x_log10() +
         scale_y_log10(breaks=c(0.1,1,3,10,30,100)) +
@@ -15,7 +15,7 @@ odds = function(df)
 fp_total = function(df)
     ggplot(df, aes(x=edges, y=pmax(0,exp_fp), color=method)) +
         geom_line() +
-        geom_point() +
+        geom_point(size=0.5) +
         facet_grid(expr ~ cohort) +
         scale_x_log10() +
         scale_y_log10() +
@@ -26,7 +26,7 @@ fp_total = function(df)
 fpr_genome = function(df)
     ggplot(df, aes(x=edges, y=fpr_total*100, color=method)) +
         geom_line() +
-        geom_point() +
+        geom_point(size=0.5) +
         facet_grid(expr ~ cohort, scales="free_y") +
         scale_x_log10() +
         theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
@@ -36,7 +36,7 @@ fpr_genome = function(df)
 fpr_segment = function(df)
     ggplot(df, aes(x=edges, y=pmax(0,fpr_seg*100), color=method)) +
         geom_line() +
-        geom_point() +
+        geom_point(size=0.5) +
         facet_grid(expr ~ cohort) +
         scale_x_log10() +
         theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
