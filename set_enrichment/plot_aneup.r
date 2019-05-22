@@ -5,7 +5,7 @@ plt = import('./plot')
 
 args = sys$cmd$parse(
     opt('i', 'infile', 'RData', 'merge.RData'),
-    opt('r', 'region', 'character string', 'focal'),
+    opt('r', 'region', 'character string', 'aneup'),
     opt('p', 'plotfile', 'pdf', 'plot_aneup.pdf'))
 
 allseg = io$load(args$infile) %>%
