@@ -20,6 +20,7 @@ estimate = lapply(cohorts, tcga$cna_chrs) %>%
 
 sets = seq$coords$gene("hgnc_symbol", chromosomes=c(1:22,'X')) %>%
     select(chromosome_name, gene=external_gene_name) %>%
+    filter(gene != "RF00019") %>% #FIXME: why is this in there so often?
     group_by(chromosome_name) %>%
     tidyr::nest() %>%
     arrange(chromosome_name) %$%
