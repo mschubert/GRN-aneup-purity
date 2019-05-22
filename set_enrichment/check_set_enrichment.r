@@ -13,24 +13,21 @@ args = sys$cmd$parse(
     opt('o', 'outfile', '.RData', 'focal_aracne/naive/ACC.RData'))
 
 net = io$load(args$network)
+valid_genes = unique(c(net$Regulator, net$Target))
 
-if (args$method %in% c("aracne", "TFbinding")) { # with knowledge what is TF
-    valid_genes = unique(c(net$Regulator, net$Target))
+if (args$method %in% c("aracne", "TFbinding", "Genie3+TF", "Tigress+TF")) {
     set2possible_links = function(genes, net) {
         ntf = sum(genes %in% net$Regulator)
         ntg = sum(genes %in% setdiff(net$Target, net$Regulator))
-        if (ntf > 0)
-            ntf * (ntf-1) + ntf * ntg
-        else
-            0
+        ntf * (ntf-1) + ntf * ntg
     }
     set2real_links = function(genes, net)
         nrow(filter(net, Regulator %in% genes & Target %in% genes))
 } else {
-    valid_genes = unique(c(as.character(net$node1), as.character(net$node2)))
+    valid_genes = unique(c(net$Regulator, net$Target))
     set2possible_links = function(genes, net) { ng = length(genes); 0.5 * (ng^2 - ng) }
     set2real_links = function(genes, net)
-        nrow(filter(net, node1 %in% genes & node2 %in% genes))
+        nrow(filter(net, Regulator %in% genes & Target %in% genes))
 }
 
 # get gene sets of co-amplified segments (either focal CNA or aneuploidy)
