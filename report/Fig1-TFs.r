@@ -86,7 +86,7 @@ p12 = ggplot(rects) +
 ###
 perf = io$load("../set_enrichment/TFbinding_enrichment.RData")
 hits = filter(perf$hits, expr == "naive", size<=1e6) %>%
-    mutate(mstr = unlist(config$method_str[method]),
+    mutate(mstr = factor(unlist(config$method_str[method]), levels=names(config$mcol)),
            has_tf = method %in% config$has_tf)
 hl = data.frame(xmin=0, ymin=0, xmax=2e5, ymax=1200)
 #hitsTF = filter(hits, method %in% config$has_tf, size<=hl$xmax)
@@ -103,6 +103,7 @@ p2 = ggplot(hits, aes(x=size, y=TP, color=mstr)) +
          y = "TF:TG recovered",
          tag = "c") +
     scale_size_manual(values=c(0.6,1)) +
+    scale_color_manual(values=unlist(config$mcol), na.translate=FALSE) +
     guides(color = guide_legend(title="Method"),
            size = guide_legend(title="TF annotations")) +
     theme(axis.text.x = element_text(angle=45, hjust=1))
@@ -116,6 +117,7 @@ p3 = ggplot(hitsTF, aes(x=size, y=TP, color=mstr)) +
          y = "TF:TG recovered",
          tag = "d") +
     scale_size_manual(values=c(0.6,1)) +
+    scale_color_manual(values=unlist(config$mcol)) +
     guides(color=FALSE, size=FALSE) +
     theme(axis.text.x = element_text(angle=45, hjust=1))
 #          panel.background = element_rect(fill="#F0E8D8"))

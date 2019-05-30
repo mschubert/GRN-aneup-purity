@@ -37,7 +37,7 @@ method_str:
     aracne: ARACNe
     TFbinding: TF binding
     mrnetb.wrap: MRNETb
-    mutrank.wrap: MRNET
+    mutrank.wrap: Mutrank
     pcit.wrap: PCIT
     clr.wrap: CLR
     mrnet.wrap: MRNET
@@ -53,3 +53,16 @@ has_tf:
     - aracne
     - Genie3+TF
     - Tigress+TF
+
+mcol:
+    GeneNet: "#a65628"
+    ARACNe: "#e31a1c"
+    TF binding: "#000000"
+    MRNET: "#ff7f00"
+    MRNETb: "#fdbf6f"
+    PCIT: "#377eb8"
+    CLR: "#b3de69"
+    C3NET: "#a6cee3"
+    Mutrank: "#d9d9d9"
+    GENIE3: "#33a02c"
+    TIGRESS: "#984ea3"

@@ -18,7 +18,7 @@ dset = io$load("../set_enrichment/merge.RData") %>%
     filter(! (kind == "fpr_seg" & method == "TFbinding"),
            method != "zscore.wrap") %>%
     mutate(kind = factor(lookup[kind], levels=lookup),
-           mstr = unlist(config$method_str[method]),
+           mstr = factor(unlist(config$method_str[method]), levels=names(config$mcol)),
            has_tf = method %in% config$has_tf)
 p1000 = filter(dset, seg_id == "purity1000")
 p5000 = filter(dset, seg_id == "purity5000")
@@ -29,6 +29,7 @@ p1 = ggplot(p1000, aes(x=edges, y=value*100, color=mstr)) +
     facet_grid(kind ~ cohort, scales="free_y") +
     scale_x_log10() +
     scale_size_manual(values=c(0.6, 1)) +
+    scale_color_manual(values=unlist(config$mcol)) +
     theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
           axis.text.x = element_text(angle=45, hjust=1)) +
     guides(color = guide_legend(title="Method"),
@@ -44,6 +45,7 @@ p2 = ggplot(p5000, aes(x=edges, y=value*100, color=mstr)) +
     facet_grid(kind ~ cohort, scales="free_y") +
     scale_x_log10() +
     scale_size_manual(values=c(0.6,1)) +
+    scale_color_manual(values=unlist(config$mcol)) +
     theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
           axis.text.x = element_text(angle=45, hjust=1)) +
     guides(color=FALSE, size=FALSE) +
