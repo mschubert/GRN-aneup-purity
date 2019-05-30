@@ -30,4 +30,4 @@ set_enrichment:
 
 correction:
     - naive
-    - copycor
+#    - copycor
