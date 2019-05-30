@@ -61,12 +61,14 @@ rule fet:
     input:
         rscript = "check_set_enrichment.r",
         network = net("{method}/{correction}/{cohort}.RData"),
+        ng = data("ng.RData"),
         sets = data("{region}.RData")
     output:
         result = "{region}_{method}/{correction}/{cohort}.RData"
     shell:
         "Rscript {input.rscript}"
             " --cohort {wildcards.cohort}"
+            " --ng {input.ng}"
             " --sets {input.sets}"
             " --method {wildcards.method}"
             " --network {input.network}"

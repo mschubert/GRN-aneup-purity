@@ -4,10 +4,12 @@ sys = import('sys')
 
 count_cohort = function(fname) {
     expr = io$load(fname)
-    data.frame(ng = nrow(expr),
+    tibble(ng = nrow(expr),
          ntf = length(intersect(rownames(expr), tfa)),
          nsmp = ncol(expr),
-         nint = nrow(filter(tftg, ind %in% rownames(expr) & values %in% rownames(expr)))
+         nint = nrow(filter(tftg, ind %in% rownames(expr) & values %in% rownames(expr))),
+         genes = list(rownames(expr)),
+         tfs = list(intersect(rownames(expr), tfa))
     )
 }
 
@@ -30,6 +32,6 @@ ng = do.call(rbind, strsplit(tools::file_path_sans_ext(args$expr), "[_/]")) %>%
               values = purrr::map(args$expr, count_cohort)) %>%
     tidyr::unnest() %>%
     mutate(psbl = 0.5 * (ng-1) * ng,
-           psbl_tf = ntf * ng - 0.5 * (ntf-1) * ntf)
+           psbl_tf = (ng - ntf) * ntf + 0.5 * (ntf - 1) * ntf)
 
 save(ng, file=args$outfile)

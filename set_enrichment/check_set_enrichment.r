@@ -8,33 +8,31 @@ tcga = import('data/tcga')
 args = sys$cmd$parse(
     opt('c', 'cohort', 'chr', 'ACC'),
     opt('s', 'sets', 'RData', '../data/focal.RData'),
+    opt('g', 'ng', 'RData', '../data/ng.RData'),
     opt('m', 'method', 'aracne or genenet', 'aracne'),
     opt('i', 'min_edges', 'integer', '1e3'),
-    opt('a', 'max_edges', 'integer', '1e6'),
+    opt('a', 'max_edges', 'integer', '1e7'),
     opt('t', 'n_steps', 'integer', '15'),
     opt('n', 'network', 'RData', '../networks/aracne/naive/ACC.RData'),
     opt('o', 'outfile', '.RData', 'focal_aracne/naive/ACC.RData'))
 
 net = io$load(args$network)
-valid_genes = unique(c(net$Regulator, net$Target))
+ng = io$load(args$ng) %>% filter(cohort == args$cohort, expr == "naive") #TODO: also copycor
 min_edges = as.numeric(args$min_edges)
 max_edges = as.numeric(args$max_edges)
 n_steps = as.numeric(args$n_steps)
 
-if (args$method %in% c("aracne", "TFbinding", "Genie3+TF", "Tigress+TF")) {
-    set2possible_links = function(genes, net) {
-        ntf = sum(genes %in% net$Regulator)
-        ntg = sum(genes %in% setdiff(net$Target, net$Regulator))
-        ntf * (ntf-1) + ntf * ntg
-    }
-    set2real_links = function(genes, net)
-        nrow(filter(net, Regulator %in% genes & Target %in% genes))
-} else {
-    valid_genes = unique(c(net$Regulator, net$Target))
-    set2possible_links = function(genes, net) { ng = length(genes); 0.5 * (ng^2 - ng) }
-    set2real_links = function(genes, net)
-        nrow(filter(net, Regulator %in% genes & Target %in% genes))
+valid_genes = valid_tfs = ng$genes[[1]]
+if (args$method %in% c("aracne", "TFbinding", "Genie3+TF", "Tigress+TF"))
+    valid_tfs = ng$tfs[[1]]
+
+set2possible_links = function(genes, net=NA) {
+    ng = length(genes)
+    ntf = sum(genes %in% valid_tfs)
+    (ng - ntf) * ntf + 0.5 * (ntf - 1) * ntf
 }
+set2real_links = function(genes, net)
+    nrow(filter(net, Regulator %in% genes & Target %in% genes))
 
 # get gene sets of co-amplified segments (either focal CNA or aneuploidy)
 rset = io$load(args$sets)
@@ -48,7 +46,7 @@ cna_genes = gset$filter(cna_genes, min=2, max=Inf, valid=valid_genes)
 # compare within-segment vs. outside of segment
 #   and TF targets vs non-TF targets
 calc_net = function(net, co) {
-    net2 = head(net, co)
+    subnet = head(net, co)
     do_test = function(seg_real, all_real, seg_psbl, all_psbl, ...) {
         links = rbind(c(seg_real, all_real), c(seg_psbl, all_psbl))
         colnames(links) = c("seg", "all")
@@ -60,16 +58,16 @@ calc_net = function(net, co) {
             mutate(links = list(links))
     }
     make_counts = function(fun) {
-        segs = sapply(cna_genes, fun, net=net2)
+        segs = sapply(cna_genes, function(g) fun(g, net=subnet))
         if (length(Reduce(intersect, cna_genes)) > 0)
             segs
         else # only merge if non-overlapping sets
             c(all=sum(segs), segs)
     }
-    res = data.frame(seg_psbl = make_counts(set2possible_links), # filtered network
-                     seg_real = make_counts(set2real_links),
-                     all_psbl = set2possible_links(valid_genes, net), # full network
-                     all_real = nrow(net)) %>%
+    data.frame(seg_psbl = make_counts(set2possible_links), # filtered network
+               seg_real = make_counts(set2real_links),
+               all_psbl = set2possible_links(valid_genes), # full network
+               all_real = nrow(net)) %>%
         tibble::rownames_to_column("seg_id") %>%
         as_tibble() %>%
         filter(seg_psbl > 0) %>%
