@@ -12,8 +12,8 @@ args = sys$cmd$parse(
     opt('g', 'ng', 'RData', '../data/ng.RData'),
     opt('m', 'method', 'aracne or genenet', 'aracne'),
     opt('i', 'min_edges', 'integer', '1e3'),
-    opt('a', 'max_edges', 'integer', '1e7'),
-    opt('t', 'n_steps', 'integer', '15'),
+    opt('a', 'max_edges', 'integer', '1e6'),
+    opt('t', 'n_steps', 'integer', '12'),
     opt('n', 'network', 'RData', '../networks/aracne/naive/ACC.RData'),
     opt('o', 'outfile', '.RData', 'focal_aracne/naive/ACC.RData'))
 
