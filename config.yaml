@@ -33,21 +33,21 @@ correction:
 #    - copycor
 
 method_str:
-    - genenet: GeneNet
-    - aracne: ARACNe
-    - TFbinding: TF binding
-    - mrnetb.wrap: MRNETb
-    - mutrank.wrap: MRNET
-    - pcit.wrap: PCIT
-    - clr.wrap: CLR
-    - mrnet.wrap: MRNET
-    - aracne.wrap: ARACNe
-    - c3net.wrap: C3NET
-    - zscore.wrap: Z-score
-    - Genie3: GENIE3
-    - Genie3+TF: GENIE3
-#    - Tigress: TIGRESS
-    - Tigress+TF: TIGRESS
+    genenet: GeneNet
+    aracne: ARACNe
+    TFbinding: TF binding
+    mrnetb.wrap: MRNETb
+    mutrank.wrap: MRNET
+    pcit.wrap: PCIT
+    clr.wrap: CLR
+    mrnet.wrap: MRNET
+    aracne.wrap: ARACNe
+    c3net.wrap: C3NET
+    zscore.wrap: Z-score
+    Genie3: GENIE3
+    Genie3+TF: GENIE3
+#    Tigress: TIGRESS
+    Tigress+TF: TIGRESS
 
 has_tf:
     - aracne
