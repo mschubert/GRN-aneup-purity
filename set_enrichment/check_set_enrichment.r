@@ -64,10 +64,10 @@ calc_net = function(net, co) {
         else # only merge if non-overlapping sets
             c(all=sum(segs), segs)
     }
-    data.frame(seg_psbl = make_counts(set2possible_links), # filtered network
-               seg_real = make_counts(set2real_links),
-               all_psbl = set2possible_links(valid_genes), # full network
-               all_real = nrow(net)) %>%
+    data.frame(seg_psbl = make_counts(set2possible_links), # within-segment links possible
+               seg_real = make_counts(set2real_links), # within-segment links in network
+               all_psbl = set2possible_links(valid_genes), # total links possible
+               all_real = nrow(subnet)) %>% # total links in network
         tibble::rownames_to_column("seg_id") %>%
         as_tibble() %>%
         filter(seg_psbl > 0) %>%
