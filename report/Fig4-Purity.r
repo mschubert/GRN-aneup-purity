@@ -28,7 +28,7 @@ p1 = ggplot(p1000, aes(x=edges, y=value*100, color=mstr)) +
     geom_point(size=0.5) +
     facet_grid(kind ~ cohort, scales="free_y") +
     scale_x_log10() +
-    scale_size_manual(values=c(0.7, 1)) +
+    scale_size_manual(values=c(0.6, 1)) +
     theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
           axis.text.x = element_text(angle=45, hjust=1)) +
     guides(color = guide_legend(title="Method"),
@@ -43,7 +43,7 @@ p2 = ggplot(p5000, aes(x=edges, y=value*100, color=mstr)) +
     geom_point(size=0.5) +
     facet_grid(kind ~ cohort, scales="free_y") +
     scale_x_log10() +
-    scale_size_manual(values=c(0.7,1)) +
+    scale_size_manual(values=c(0.6,1)) +
     theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
           axis.text.x = element_text(angle=45, hjust=1)) +
     guides(color=FALSE, size=FALSE) +
