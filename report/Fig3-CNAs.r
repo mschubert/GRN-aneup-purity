@@ -4,8 +4,8 @@ library(patchwork)
 io = import('io')
 
 lookup = c(
-    fpr_seg = "FPR within CNA",
-    fpr_total = "FPR over all edges"
+    fpr_seg = "within CNA",
+    fpr_total = "fraction of total"
 )
 
 dset = io$load("../set_enrichment/merge.RData") %>%
@@ -19,7 +19,7 @@ dset = io$load("../set_enrichment/merge.RData") %>%
 focal = filter(dset, regions == "focal")
 aneup = filter(dset, regions == "aneup")
 
-levels(aneup$kind)[1] = "FPR within Chromosome"
+levels(aneup$kind)[1] = "within Chromosome"
 
 p1 = ggplot(focal, aes(x=edges, y=value*100, color=method)) +
     geom_line() +
@@ -29,7 +29,7 @@ p1 = ggplot(focal, aes(x=edges, y=value*100, color=method)) +
     theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
           axis.text.x = element_text(angle=45, hjust=1)) +
     labs(x = "# of edges",
-         y = "% of edges",
+         y = "% of edges expected FPs",
          tag = "a",
          title = "Focal CNAs (as defined by RACS in GDSC)")
 
@@ -41,7 +41,7 @@ p2 = ggplot(aneup, aes(x=edges, y=value*100, color=method)) +
     theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
           axis.text.x = element_text(angle=45, hjust=1)) +
     labs(x = "# of edges",
-         y = "% of edges",
+         y = "% of edges expected FPs",
          tag = "b",
          title = "Aneuploidies (chromosome copy number changes)")
 
