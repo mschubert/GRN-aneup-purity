@@ -85,30 +85,38 @@ p12 = ggplot(rects) +
 ### Comparison of inferred networks with vs. without TFs
 ###
 perf = io$load("../set_enrichment/TFbinding_enrichment.RData")
-hits = filter(perf$hits, expr == "naive", size<=1.5e6)
+hits = filter(perf$hits, expr == "naive", size<=1.5e6) %>%
+    mutate(mstr = unlist(config$method_str[method]),
+           has_tf = method %in% config$has_tf)
 hl = data.frame(xmin=0, ymin=0, xmax=2e5, ymax=1200)
-hitsTF = filter(hits, method %in% c("aracne", "Genie3+TF", "Tigress+TF"), size<=hl$xmax)
+#hitsTF = filter(hits, method %in% config$has_tf, size<=hl$xmax)
+hitsTF = filter(hits, size<=hl$xmax)
 slope = filter(perf$ng, expr == "naive")
 
-p2 = ggplot(hits, aes(x=size, y=TP, color=method)) +
+p2 = ggplot(hits, aes(x=size, y=TP, color=mstr)) +
     geom_rect(data=hl, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),
               inherit.aes=FALSE, fill="#F0E8D8", color="black", linetype="dotted") +
     geom_abline(data=slope, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
-    geom_line() +
+    geom_line(aes(size=has_tf, group=method), alpha=0.7) +
     facet_wrap(~cohort, nrow=1) +
     labs(x = "",
          y = "TF:TG recovered",
          tag = "c") +
+    scale_size_manual(values=c(0.7,1)) +
+    guides(color = guide_legend(title="Method"),
+           size = guide_legend(title="TF annotations")) +
     theme(axis.text.x = element_text(angle=45, hjust=1))
 
-p3 = ggplot(hitsTF, aes(x=size, y=TP, color=method)) +
+p3 = ggplot(hitsTF, aes(x=size, y=TP, color=mstr)) +
     geom_abline(data=slope, aes(slope=slope, intercept=0), color="grey", linetype="dashed") +
-    geom_line() +
+    geom_line(aes(size=has_tf, group=method), alpha=0.7) +
     ylim(c(0, hl$ymax)) +
     facet_wrap(~cohort, nrow=1) +
     labs(x = "Edges in network",
          y = "TF:TG recovered",
          tag = "d") +
+    scale_size_manual(values=c(0.7,1)) +
+    guides(color=FALSE, size=FALSE) +
     theme(axis.text.x = element_text(angle=45, hjust=1))
 #          panel.background = element_rect(fill="#F0E8D8"))
 
