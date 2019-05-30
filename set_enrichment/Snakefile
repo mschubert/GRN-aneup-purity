@@ -67,6 +67,7 @@ rule fet:
         result = "{region}_{method}/{correction}/{cohort}.RData"
     shell:
         "Rscript {input.rscript}"
+            " --config ../config.yaml"
             " --cohort {wildcards.cohort}"
             " --ng {input.ng}"
             " --sets {input.sets}"

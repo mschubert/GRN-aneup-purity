@@ -6,6 +6,7 @@ gset = import('data/genesets')
 tcga = import('data/tcga')
 
 args = sys$cmd$parse(
+    opt('f', 'config', 'yaml', '../config.yaml'),
     opt('c', 'cohort', 'chr', 'ACC'),
     opt('s', 'sets', 'RData', '../data/focal.RData'),
     opt('g', 'ng', 'RData', '../data/ng.RData'),
@@ -16,6 +17,7 @@ args = sys$cmd$parse(
     opt('n', 'network', 'RData', '../networks/aracne/naive/ACC.RData'),
     opt('o', 'outfile', '.RData', 'focal_aracne/naive/ACC.RData'))
 
+config = io$read_yaml(args$config)
 net = io$load(args$network)
 ng = io$load(args$ng) %>% filter(cohort == args$cohort, expr == "naive") #TODO: also copycor
 min_edges = as.numeric(args$min_edges)
@@ -23,7 +25,7 @@ max_edges = as.numeric(args$max_edges)
 n_steps = as.numeric(args$n_steps)
 
 valid_genes = valid_tfs = ng$genes[[1]]
-if (args$method %in% c("aracne", "TFbinding", "Genie3+TF", "Tigress+TF"))
+if (args$method %in% config$has_tf)
     valid_tfs = ng$tfs[[1]]
 
 set2possible_links = function(genes, net=NA) {
