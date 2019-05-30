@@ -27,7 +27,7 @@ mat2df = function(mat, tfs) {
 args = sys$cmd$parse(
     opt('c', 'cohort', 'cohort identifier', 'ACC'),
     opt('e', 'expr', 'expression matrix RData', '../data/expr_copycor/ACC.RData'),
-    opt('s', 'select', 'top N links max', '1e6'),
+    opt('s', 'select', 'top N links max', '1e7'),
     opt('m', 'method', 'method identifier', 'aracne'),
     opt('a', 'tf_annot', 'RData', '../data/tf_annot.RData'),
     opt('b', 'tf_binding', 'RData', '../data/tf_binding.RData'),
