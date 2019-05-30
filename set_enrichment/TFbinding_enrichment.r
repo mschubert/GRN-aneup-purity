@@ -5,8 +5,7 @@ io = import('io')
 sys = import('sys')
 
 check_hits = function(net, real) {
-    re = c(paste(as.character(net[[1]]), as.character(net[[2]])),
-           paste(as.character(net[[2]]), as.character(net[[1]]))) %in%
+    re = paste(as.character(net[[1]]), as.character(net[[2]])) %in%
         paste(as.character(real[[1]]), as.character(real[[2]])) + 0
     roc = data.frame(TP = c(0,cumsum(re)), size = c(0,seq_along(re)))
     roc2 = roc[re != 0 | c(1,re[-c(1,2)], 1) != 0,]
@@ -20,6 +19,8 @@ args = sys$cmd$parse(
     arg('net', 'networks', arity='*', rep('../networks/aracne/naive/ACC.RData', 2)))
 
 real = unique(io$load(args$real))
+real_undir = bind_rows(real, real %>% rename(Regulator=Target, Target=Regulator))
+
 ng = io$load(args$ng) %>%
     mutate(slope = nrow(real)/psbl,
            slope_tf = nrow(real)/psbl_tf) %>%
@@ -33,7 +34,7 @@ hits = do.call(rbind, strsplit(tools::file_path_sans_ext(args$net), "/")) %>%
               expr = ...2,
               cohort = ...1,
               data = io$load(args$net)) %>%
-    mutate(hits = purrr::map(data, check_hits, real=real)) %>%
+    mutate(hits = purrr::map(data, check_hits, real=real_undir)) %>%
     select(-data) %>%
     tidyr::unnest()
 
