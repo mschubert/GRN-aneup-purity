@@ -36,7 +36,7 @@ p1 = ggplot(focal, aes(x=edges, y=value*100, color=mstr)) +
           axis.text.x = element_text(angle=45, hjust=1)) +
     guides(color = guide_legend(title="Method"),
            size = guide_legend(title="TF annotations")) +
-    labs(x = "# of edges",
+    labs(x = "# of edges considered",
          y = "% of edges expected FPs",
          tag = "a",
          title = "Focal CNAs (as defined by RACS in GDSC)")
@@ -51,7 +51,7 @@ p2 = ggplot(aneup, aes(x=edges, y=value*100, color=mstr)) +
     theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
           axis.text.x = element_text(angle=45, hjust=1)) +
     guides(color=FALSE, size=FALSE) +
-    labs(x = "# of edges",
+    labs(x = "# of edges considered",
          y = "% of edges expected FPs",
          tag = "b",
          title = "Aneuploidies (chromosome copy number changes)")

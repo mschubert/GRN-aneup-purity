@@ -34,7 +34,7 @@ p1 = ggplot(p1000, aes(x=edges, y=value*100, color=mstr)) +
           axis.text.x = element_text(angle=45, hjust=1)) +
     guides(color = guide_legend(title="Method"),
            size = guide_legend(title="TF annotations")) +
-    labs(x = "# of edges",
+    labs(x = "# of edges considered",
          y = "% of edges expected FPs",
          tag = "a",
          title = "1000 genes most correlated with purity")
@@ -49,7 +49,7 @@ p2 = ggplot(p5000, aes(x=edges, y=value*100, color=mstr)) +
     theme(panel.grid.major.y = element_line(color="grey", linetype="dashed"),
           axis.text.x = element_text(angle=45, hjust=1)) +
     guides(color=FALSE, size=FALSE) +
-    labs(x = "# of edges",
+    labs(x = "# of edges considered",
          y = "% of edges expected FPs",
          tag = "b",
          title = "5000 genes most correlated with purity")

@@ -113,7 +113,7 @@ p3 = ggplot(hitsTF, aes(x=size, y=TP, color=mstr)) +
     geom_line(aes(size=has_tf, group=method), alpha=0.7) +
     ylim(c(0, hl$ymax)) +
     facet_wrap(~cohort, nrow=1) +
-    labs(x = "Edges in network",
+    labs(x = "# of edges considered",
          y = "TF:TG recovered",
          tag = "d") +
     scale_size_manual(values=c(0.6,1)) +
