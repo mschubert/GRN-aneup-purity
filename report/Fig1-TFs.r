@@ -1,6 +1,7 @@
 library(dplyr)
-library(cowplot)
+library(ggplot2)
 library(patchwork)
+theme_set(cowplot::theme_cowplot())
 io = import('io')
 
 ###
@@ -13,7 +14,7 @@ tfb = io$load("../data/tf_binding.RData")
 
 dream = data.frame(
     collec = c(rep("DREAM 5", 3), rep("DREAM 4", 5)),
-    net = c("In-silico (1)", "E. coli (2)", "S. cervisiae (3)", paste("Network", 1:5)),
+    net = c("In-silico (1)", "E. coli (2)", "S. cerevisiae (3)", paste("Network", 1:5)),
     ng = c(1643, 4511, 5950, rep(100, 5)),
     ntf = c(195, 334, 333, rep(100, 5)),
     nsmp = c(805, 805, 536, rep(100, 5)),
@@ -59,7 +60,7 @@ rects = matrix(nrow=4, dimnames=list(c("xmin", "ymin", "xmax", "ymax"), NULL), c
     0,0, 100, 100, # dream4
     0,0, dream[[1,"ng"]], dream[[1,"ntf"]], # dream5 in silico
     0,0, dream[[2,"ng"]], dream[[2,"ntf"]], # dream5 e. coli
-    0,0, dream[[3,"ng"]], dream[[3,"ntf"]], # dream5 s. cervisiae
+    0,0, dream[[3,"ng"]], dream[[3,"ntf"]], # dream5 s. cerevisiae
 NULL)) %>% t() %>% as.data.frame()
 rects[3:6,c('xmin','xmax')] = rects[3:6,c('xmin','xmax')] + 1000
 rects[3:6,c('ymin','ymax')] = rects[3:6,c('ymin','ymax')] + rep(1:4, length.out=8) * 1500 + 10000
