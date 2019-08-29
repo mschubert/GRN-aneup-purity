@@ -15,10 +15,13 @@ mem = {
     'Genie3' : 122880
 }
 
+bootstraps = range(config['bootstraps'])
+
 rule all:
     input:
-        expand("{method}/{correction}/{cohort}.RData", method=config['methods'],
-                cohort=config['cohorts'], correction=config['correction'])
+        expand("{method}/{correction}/{cohort}/{bootstrap}.RData",
+                method=config['methods'], correction=config['correction'],
+                cohort=config['cohorts'], bootstrap=bootstraps)
 
 rule network:
     input:
@@ -46,8 +49,9 @@ rule network:
 
 rule bootstrap:
     input:
-        expand("{method}/{correction}/{cohort}/{bs}.RData", method=config['methods'],
-                cohort=config['cohorts'], correction=config['correction'], bs=range(1,11))
+        expand("{method}/{correction}/{cohort}/{bootstrap}.RData",
+                method=config['methods'], correction=config['correction'],
+                cohort=config['cohorts'], bootstrap=bootstraps)
 
 rule networks:
     input:

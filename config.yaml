@@ -23,6 +23,8 @@ methods:
 #    - Tigress
     - Tigress+TF
 
+bootstraps: 10
+
 set_enrichment:
     - focal
     - aneup
