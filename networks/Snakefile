@@ -19,9 +19,8 @@ bootstraps = range(config['bootstraps'])
 
 rule all:
     input:
-        expand("{method}/{correction}/{cohort}/{bootstrap}.RData",
-                method=config['methods'], correction=config['correction'],
-                cohort=config['cohorts'], bootstrap=bootstraps)
+        expand("{method}/{correction}/{cohort}.RData", method=config['methods'],
+                cohort=config['cohorts'], correction=config['correction'])
 
 rule network:
     input:
