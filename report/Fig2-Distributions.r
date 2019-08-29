@@ -78,7 +78,7 @@ p21 = ggplot(df) +
                             outlier.shape=1, outlier.size=0.2, outlier.alpha=0.5) +
     facet_grid(cohort ~ ., scales="free", space="free_y") +
     guides(fill=FALSE) +
-    scale_x_continuous(trans="log2", breaks=1:9) +
+    scale_x_continuous(trans="log2", limits=c(0.6, 10), breaks=1:9) +
     scale_y_discrete(labels=y_labels) +
     labs(tag = "d",
          x = "DNA copies of segment",
