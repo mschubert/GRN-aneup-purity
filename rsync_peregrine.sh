@@ -2,7 +2,9 @@
 
 rsync -auvr --include='*.pdf' \
     --exclude '.snakemake' \
+    --exclude 'networks/**.RData' \
     --include '*.RData' \
+    --include '*.png' \
     --include '*.tsv' \
     --include='*/' \
     --include='docs/*' \
