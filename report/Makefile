@@ -1,7 +1,11 @@
 R = R --no-save --no-restore -e
 SRC = $(wildcard *.r)
+PDF = $(SRC:%.r=%.pdf)
 
-all: $(SRC:%.r=%.pdf) $(SRC:%.r=%.png)
+all: $(PDF) $(PDF:%.pdf=%.png) Figures.pdf
+
+Figures.pdf:
+	pdftk $(sort $(PDF)) cat output $@
 
 %.pdf: %.r
 	Rscript $<
