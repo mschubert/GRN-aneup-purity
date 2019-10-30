@@ -124,7 +124,7 @@ p31 = ggplot(df) +
     guides(fill=FALSE) +
     scale_x_continuous(trans="log2", breaks=1:4) +
     scale_y_discrete(labels=y_labels) +
-    labs(tag = "e",
+    labs(#tag = "e",
          x = "Ploidy (number of chromosomes)",
          y = "Chromosome")
 
