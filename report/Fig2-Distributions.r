@@ -122,7 +122,7 @@ p31 = ggplot(df) +
                             outlier.shape=1, outlier.size=0.2, outlier.alpha=0.5) +
     facet_grid(cohort ~ ., scales="free", space="free_y") +
     guides(fill=FALSE) +
-    scale_x_continuous(trans="log2", breaks=2:3) +
+    scale_x_continuous(trans="log2", breaks=1:4) +
     scale_y_discrete(labels=y_labels) +
     labs(tag = "e",
          x = "Ploidy (number of chromosomes)",
@@ -133,7 +133,7 @@ p32 = ggplot(ng) +
     facet_grid(cohort ~ ., scales="free", space="free_y") +
     guides(fill=FALSE) +
     scale_y_discrete(labels=y_labels) +
-    labs(x = "# genes") +
+    scale_x_continuous(name="# genes", breaks=c(0,2000,4000), labels=c(0,"2k","4k")) +
     theme(axis.title.y = element_blank(),
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank(),
