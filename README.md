@@ -11,7 +11,7 @@
 > (1) transcription factor annotations are essential to obtain reliable
 > networks, and (2) even for state of the art methods, we expect that between
 > 20 and 80% of edges are caused by copy number changes and cell mixtures
-> rather than transcription factor regulation.]
+> rather than transcription factor regulation.
 
 This is the analysis code for our paper at https://doi.org/10.1016/j.bbagrm.2019.194444
 
@@ -22,7 +22,7 @@ The main conclusions are outlined below.
 
 ### DREAM evaluations differ from cancer data
 
-![](https://github.com/mschubert/GRN-aneup-purity/releases/download/untagged-02aa9a1b519d7dac62f7/Fig1-TFs.png)
+![](https://drive.google.com/file/d/1gj95RzDUoGmC5DWTbK1WRCRz4nKCF1nr/preview)
 
 Gene network inference methods have been extensively validated using consortium
 benchmarks such as the [DREAM challenges](http://dreamchallenges.org/). However,
@@ -31,7 +31,7 @@ samples than those in the evaluation.
 
 ### Cancers are aneuploid and impure, but this has not been modeled
 
-![](https://github.com/mschubert/GRN-aneup-purity/releases/download/untagged-02aa9a1b519d7dac62f7/Fig2-Distributions.png)
+![](https://drive.google.com/file/d/1N-0uVIXWVL7tGuJqxiuI0lOgWsuQvfUw/preview)
 
 Previous evaluations have also not considered specific biological properties of
 cancer data: they show chromosome copy number changes that influences gene
@@ -41,7 +41,7 @@ samples.
 
 ### Copy number alterations influence inferred gene networks
 
-![](https://github.com/mschubert/GRN-aneup-purity/releases/download/untagged-02aa9a1b519d7dac62f7/Fig3-CNAs.png)
+![](https://drive.google.com/file/d/1o1gaQiCkCInlJSGMOkW223ol1nijod2y/preview)
 
 Regulatory links are often inferred for genes in the same currently amplified
 region. They do, however, only comprise few genes so the effect on the total
@@ -51,7 +51,7 @@ the inferred network as a whole.
 
 ### Sample mixtures influence inferred gene networks
 
-![](https://github.com/mschubert/GRN-aneup-purity/releases/download/untagged-02aa9a1b519d7dac62f7/Fig4-Purity.png)
+![](https://drive.google.com/file/d/1B3gHawzP7nXH95E90Es_LtatYQ1W2StD/preview)
 
 Sample mixtures also show a strong effect on false positive regulatory links.
 Looking at only cancer vs. non-cancer (purity of the sample), we find that
@@ -69,14 +69,14 @@ If you want to run this code, you will require:
 
 Given that you have set up these packages and data, you can run the analyses:
 
-```
+```sh
 cd set_enrichment
 snakemake
 ```
 
 And generate the figures:
 
-```
+```sh
 cd report
 make
 ```
