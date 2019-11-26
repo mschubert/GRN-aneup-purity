@@ -16,6 +16,49 @@
 This is the analysis code for our paper at https://doi.org/10.1016/j.bbagrm.2019.194444
 
 It was used to generate all figures in the article ([report](report) directory).
+The main conclusions are outlined below.
+
+## Findings
+
+### DREAM evaluations differ from cancer data
+
+![](https://github.com/mschubert/GRN-aneup-purity/releases/download/untagged-02aa9a1b519d7dac62f7/Fig1-TFs.png)
+
+Gene network inference methods have been extensively validated using consortium
+benchmarks such as the [DREAM challenges](http://dreamchallenges.org/). However,
+the cancer data these methods are often used on have many more genes and fewer
+samples than those in the evaluation.
+
+### Cancers are aneuploid and impure, but this has not been modeled
+
+![](https://github.com/mschubert/GRN-aneup-purity/releases/download/untagged-02aa9a1b519d7dac62f7/Fig2-Distributions.png)
+
+Previous evaluations have also not considered specific biological properties of
+cancer data: they show chromosome copy number changes that influences gene
+expression in a coordinated fashion, and they are mixtures of different cell
+types. These confounding factors are pervasive and not limited to individual
+samples.
+
+### Copy number alterations influence inferred gene networks
+
+![](https://github.com/mschubert/GRN-aneup-purity/releases/download/untagged-02aa9a1b519d7dac62f7/Fig3-CNAs.png)
+
+Regulatory links are often inferred for genes in the same currently amplified
+region. They do, however, only comprise few genes so the effect on the total
+network is small. Aneuploidies (whole chromosome copy number changes) introduce
+a smaller fraction of false positive links, but this has a major influence on
+the inferred network as a whole.
+
+### Sample mixtures influence inferred gene networks
+
+![](https://github.com/mschubert/GRN-aneup-purity/releases/download/untagged-02aa9a1b519d7dac62f7/Fig4-Purity.png)
+
+Sample mixtures also show a strong effect on false positive regulatory links.
+Looking at only cancer vs. non-cancer (purity of the sample), we find that
+FP links are also often inferred between genes that correlate with sample
+purity.
+
+## Running the code
 
 If you want to run this code, you will require:
 
@@ -23,3 +66,17 @@ If you want to run this code, you will require:
 * [Snakemake](https://snakemake.readthedocs.io/en/stable/) for workflow execution
 * [ebits](https://github.com/mschubert/ebits) and [data](https://github.com/mschubert/data)
   repositories with set up [module](https://github.com/klmr/modules) paths
+
+Given that you have set up these packages and data, you can run the analyses:
+
+```
+cd set_enrichment
+snakemake
+```
+
+And generate the figures:
+
+```
+cd report
+make
+```
