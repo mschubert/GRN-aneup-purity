@@ -124,5 +124,6 @@ p3 = ggplot(hitsTF, aes(x=size, y=TP, color=mstr)) +
 #          panel.background = element_rect(fill="#F0E8D8"))
 
 pdf("Fig1-TFs.pdf", 14, 12)
-({ (p12 | p11) + plot_layout(widths=c(1,2)) } / p2 / p3 ) + plot_layout(heights=c(3,2,2))
+({ (p12 | p11) + plot_layout(widths=c(1,2)) } / p2 / p3 ) + plot_layout(heights=c(3,2,2)) &
+    theme(plot.tag = element_text(size=18))
 dev.off()

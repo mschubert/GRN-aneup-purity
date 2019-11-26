@@ -149,5 +149,6 @@ p3 = p31 + p32 + plot_layout(nrow=1, widths=c(5, 1)) & theme(plot.margin = unit(
 row2 = p21 + p22 + p31 + p32 + plot_layout(nrow=1, widths = c(5,1,5,1)) &
     theme(plot.margin = unit(c(0,0,0,0), "cm"))
 pdf("Fig2-Distributions.pdf", 12, 16)
-(p11 | p12 | p13) / row2 + plot_layout(heights=c(1,3))
+(p11 | p12 | p13) / row2 + plot_layout(heights=c(1,3)) &
+    theme(plot.tag = element_text(size=18))
 dev.off()

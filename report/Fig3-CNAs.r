@@ -58,5 +58,5 @@ p2 = ggplot(aneup, aes(x=edges, y=value*100, color=mstr)) +
          title = "Aneuploidies (chromosome copy number changes)")
 
 pdf("Fig3-CNAs.pdf", 14, 12)
-p1 / p2
+p1 / p2 & theme(plot.tag = element_text(size=18))
 dev.off()
